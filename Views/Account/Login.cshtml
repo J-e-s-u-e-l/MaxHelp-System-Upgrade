@@ -1,0 +1,53 @@
+﻿@model MaxHelp_System_Upgrade.ViewModels.LoginViewModel;
+@{
+    ViewData["Title"] = "Login";
+    Layout = null;
+}
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <title>Login</title>
+    <link rel="stylesheet" href="~/css/login.css">
+</head>
+<body>
+    <div class="container">
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger errorMessage">@Html.ValidationSummary()</div>
+        }
+        <p class="logo">MHelp</p>
+
+        <h1>Welcome back to MaxHelp</h1>
+
+        <p class="subtitle">Access your Dashboard and stay in control!</p>
+
+        <form asp-action="Login" method="post" class="login-form">
+            <div class="input-container">
+                <input asp-for="Email" type="email" placeholder="Email" required>
+            </div>
+
+            <div class="input-container password-container">
+                <input asp-for="Password" type="password" placeholder="Password" required>
+                @* <span class="eye-icon">👁️</span> *@
+            </div>
+
+            <div class="options">
+                <label class="remember-me" style="display: flex; width: 15px; height: 15px;">
+                    <input type="checkbox"><span>Remember<span style="margin-left: 3px;">me</span></span>
+                </label>
+                <a href="#" class="forgot-password">Forgot Password</a>
+            </div>
+            <button type="submit" class="login-button">Log in</button>
+        </form>
+    </div>
+</body>
+</html>
+
+
