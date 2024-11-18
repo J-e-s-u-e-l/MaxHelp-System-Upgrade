@@ -1,4 +1,5 @@
 ﻿using MaxHelp_System_Upgrade.Data;
+using MaxHelp_System_Upgrade.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MaxHelp_System_Upgrade.Controllers
@@ -15,20 +16,44 @@ namespace MaxHelp_System_Upgrade.Controllers
         {
             var businessUnitId = int.Parse(User.Claims.First(x => x.Type == "BusinessUnitId").Value);
 
-            var inventoryCount = _dataDbContext.InventoryItems
-                .Where(i => i.BusinessUnitId == businessUnitId)
-                .Count();
+            // Fetch Data for the dashboard
+            var viewModel = new DashboardViewModel
+            {
+                TotalSalesToday = _dataDbContext.Sales
+                .Where(s => s.BusinessUnitId == businessUnitId && s.SaleDate.Date == DateTime.Today)
+                .Sum(s => (decimal?)s.Amount) ?? 0,
 
-            var financialReport = _dataDbContext.FinancialReports
-                .Where(x => x.BusinessUnitId == businessUnitId && x.Date == DateTime.Today)
-                .ToList();
+                TotalSalesYesterday = _dataDbContext.Sales
+                .Where(s => s.BusinessUnitId == businessUnitId && s.SaleDate.Date == DateTime.Today.AddDays(-1))
+                .Sum(s => (decimal?)s.Amount) ?? 0,
 
-            //var viewModel = new DashBoardViewModel
-            //{
+                TopSales = _dataDbContext.Sales
+                .Where(s => s.BusinessUnitId == businessUnitId)
+                .GroupBy(s => s.ProductName)
+                .OrderByDescending(g => g.Sum(x => x.Amount))
+                .Take(3)
+                .Select(g => new TopSalesItem
+                {
+                    ItemName = g.Key,
+                    SalesCount = g.Count(),
+                    TotalAmount = g.Sum(x => x.Amount)
+                })
+                .ToList(),
 
-            //};
+                TotalUnitSoldThisWeek = _dataDbContext.Sales
+                .Where(s => s.BusinessUnitId == businessUnitId && s.SaleDate >= DateTime.Today.AddDays(-7))
+                .Count(),
 
-            return View();
+                TotalRevenue = _dataDbContext.Sales
+                .Where(s => s.BusinessUnitId == businessUnitId)
+                .Sum(s => (decimal?)s.Amount) ?? 0,
+
+                LowStockItemsCount = _dataDbContext.Inventory
+                .Where(i => i.BusinessUnitId == businessUnitId && i.ProductQuantity < i.ReorderThreshold)
+                .Count()
+            };
+
+            return View(viewModel);
         }
     }
 }

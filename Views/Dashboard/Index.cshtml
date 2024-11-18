@@ -1,0 +1,77 @@
+﻿@{
+}
+
+@model MaxHelp_System_Upgrade.ViewModels.DashboardViewModel
+@* @model DashboardViewModel *@
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Total Sales Card -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Total Sales</h5>
+                    <p>₦@Model.TotalSalesToday</p>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="salesDropdown" data-bs-toggle="dropdown">
+                            View Sales
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="salesDropdown">
+                            <li><a class="dropdown-item" href="#">Today: ₦@Model.TotalSalesToday</a></li>
+                            <li><a class="dropdown-item" href="#">Yesterday: ₦@Model.TotalSalesYesterday</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Sales Card -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Top Sales</h5>
+                    <ul class="list-group">
+                        @foreach (var item in Model.TopSales)
+                        {
+                            <li class="list-group-item">
+                                @item.ItemName - @item.SalesCount Sales - ₦@item.TotalAmount
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Units Sold This Week -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Units Sold This Week</h5>
+                    <p>@Model.TotalUnitSoldThisWeek units</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <!-- Total Revenue -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Total Revenue</h5>
+                    <p>₦@Model.TotalRevenue</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Low Stock Items -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Low Stock Items</h5>
+                    <p>@Model.LowStockItemsCount items</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

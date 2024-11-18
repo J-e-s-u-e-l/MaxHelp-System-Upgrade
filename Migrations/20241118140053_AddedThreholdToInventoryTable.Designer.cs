@@ -4,6 +4,7 @@ using MaxHelp_System_Upgrade.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MaxHelp_System_Upgrade.Migrations
 {
     [DbContext(typeof(DataDbContext))]
-    partial class DataDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241118140053_AddedThreholdToInventoryTable")]
+    partial class AddedThreholdToInventoryTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -116,7 +119,7 @@ namespace MaxHelp_System_Upgrade.Migrations
                     b.Property<int>("BusinessUnitId")
                         .HasColumnType("int");
 
-                    b.Property<int>("InventoryId")
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<string>("ProductName")
@@ -131,7 +134,7 @@ namespace MaxHelp_System_Upgrade.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("InventoryId");
+                    b.HasIndex("ProductId");
 
                     b.ToTable("Sales");
                 });
@@ -363,13 +366,13 @@ namespace MaxHelp_System_Upgrade.Migrations
 
             modelBuilder.Entity("MaxHelp_System_Upgrade.Models.Sales", b =>
                 {
-                    b.HasOne("MaxHelp_System_Upgrade.Models.Inventory", "InventoryItem")
+                    b.HasOne("MaxHelp_System_Upgrade.Models.Inventory", "Product")
                         .WithMany()
-                        .HasForeignKey("InventoryId")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("InventoryItem");
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("MaxHelp_System_Upgrade.Models.User", b =>

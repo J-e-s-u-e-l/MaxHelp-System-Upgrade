@@ -9,7 +9,10 @@ namespace MaxHelp_System_Upgrade.Data
         public DataDbContext(DbContextOptions<DataDbContext> options) : base(options) {}
 
         public DbSet<BusinessUnit> BusinessUnits { get; set; }
-        public DbSet<Product> InventoryItems { get; set; }
+        public DbSet<Inventory> InventoryItems { get; set; }
         public DbSet<FinancialReport> FinancialReports { get; set; }
+        public DbSet<Sales> Sales { get; set; }
+        public DbSet<Inventory> Inventory { get; set; }
+
     }
 }

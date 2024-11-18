@@ -6,6 +6,6 @@
         public string Name { get; set; }
         public string Location { get; set; }
         public ICollection<User> Users { get; set; }
-        public ICollection<Product> InventoryItem { get; set; }
+        public ICollection<Inventory> InventoryItem { get; set; }
     }
 }

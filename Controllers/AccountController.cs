@@ -23,22 +23,18 @@ namespace MaxHelp_System_Upgrade.Controllers
             return View();
         }
 
-        [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var result = _signInManager.PasswordSignInAsync(model.Email, model.Password, isPersistent: false, lockoutOnFailure: false);
-                if (result.IsCompletedSuccessfully)
+                var user = await _userManager.FindByEmailAsync(model.Email);
+
+                if (user != null)
                 {
-                    // Retrieve user and their Business Unit identifier
-                    var user = await _userManager.FindByEmailAsync(model.Email);
+                    var result = await _signInManager.PasswordSignInAsync(user, model.Password, isPersistent: model.RememberMe, lockoutOnFailure: false);
 
-                    // Store Business Unit identifier in session
-                    if (user == null) { return  View("User does not exist!"); }
-                    HttpContext.Session.SetString("BUIdentifier", user.BusinessUnitId.ToString());
-
-                    return RedirectToAction("Index", "Dashboard");
+                    if (result.Succeeded)
+                        return RedirectToAction("Index", "Dashboard");
                 }
                 ModelState.AddModelError(string.Empty, "Invalid Login Attempt!");
             }
