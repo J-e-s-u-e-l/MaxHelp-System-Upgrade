@@ -1,0 +1,23 @@
+﻿@model Inventory
+
+@{
+    ViewData["Title"] = "Add Product";
+}
+
+<h1>Add Product</h1>
+
+<form method="post" action="@Url.Action("AddProduct")">
+    <div>
+        <label>Product Name</label>
+        <input type="text" name="ProductName" value="@Model.ProductName" required />
+    </div>
+    <div>
+        <label>Stock Quantity</label>
+        <input type="number" name="ProductQuantity" value="@Model.ProductQuantity" required />
+    </div>
+    <div>
+        <label>Price (₦)</label>
+        <input type="text" name="ProductPrice" value="@Model.ProductPrice" required />
+    </div>
+    <button type="submit">Add Product</button>
+</form>

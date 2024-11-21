@@ -1,0 +1,105 @@
+﻿@model MaxHelp_System_Upgrade.ViewModels.SalesReportViewModel
+@{
+    ViewData["Title"] = "Sales Report";
+}
+
+<h1>Sales Report</h1>
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Total Sales Card -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Total Sales</h5>
+                    <p>
+                        @if (string.IsNullOrEmpty(Model.SelectedSalesPeriod) || Model.SelectedSalesPeriod == "Today")
+                        {
+                            @Model.TotalUnitsSoldToday
+                        }
+                        else if (Model.SelectedSalesPeriod == "Last Week")
+                        {
+                            @Model.TotalUnitsSoldLastWeek
+                        }
+                        else if (Model.SelectedSalesPeriod == "Last Month")
+                        {
+                            @Model.TotalUnitsSoldLastMonth
+                        }
+                    </p>
+
+                    <!-- Dropdown for Total Units Sold -->
+                    <div class="dropdown">
+                        <form method="get" action="@Url.Action("Index")">
+                            <input type="hidden" name="SelectedRevenuePeriod" value="@Model.SelectedRevenuePeriod" />
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="salesDropdown" data-bs-toggle="dropdown">
+                                @(string.IsNullOrEmpty(Model.SelectedSalesPeriod) ? "Today" : Model.SelectedSalesPeriod)
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="salesDropdown">
+                                <li>
+                                    <button class="dropdown-item" type="submit" name="SelectedSalesPeriod" value="Today">Today</button>
+                                </li>
+                                <li>
+                                    <button class="dropdown-item" type="submit" name="SelectedSalesPeriod" value="Last Week">Last Week</button>
+                                </li>
+                                <li>
+                                    <button class="dropdown-item" type="submit" name="SelectedSalesPeriod" value="Last Month">Last Month</button>
+                                </li>
+                            </ul>
+                        </form>
+                    </div>
+
+                    <!-- Top Selling Products -->
+                    <h6 class="mt-3">Top Selling Products</h6>
+                    <ul class="list-group">
+                        @foreach (var product in Model.TopSellingProducts)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                @product.ItemName
+                                <span class="badge bg-primary">@product.SalesCount Units</span>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Revenue Card -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Total Revenue</h5>
+                    <p>
+                        ₦@(
+                           string.IsNullOrEmpty(Model.SelectedRevenuePeriod) || Model.SelectedRevenuePeriod == "Today"
+                           ? Model.TotalRevenueToday.ToString("N2")
+                           : Model.SelectedRevenuePeriod == "Last Week"
+                           ? Model.TotalRevenueLastWeek.ToString("N2")
+                           : Model.TotalRevenueLastMonth.ToString("N2")
+                           )
+                    </p>
+
+                    <!-- Dropdown for Total Revenue -->
+                    <div class="dropdown">
+                        <form method="get" action="@Url.Action("Index")">
+                            <input type="hidden" name="SelectedSalesPeriod" value="@Model.SelectedSalesPeriod" />
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="revenueDropdown" data-bs-toggle="dropdown">
+                                @(string.IsNullOrEmpty(Model.SelectedRevenuePeriod) ? "Today" : Model.SelectedRevenuePeriod)
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="revenueDropdown">
+                                <li>
+                                    <button class="dropdown-item" type="submit" name="SelectedRevenuePeriod" value="Today">Today</button>
+                                </li>
+                                <li>
+                                    <button class="dropdown-item" type="submit" name="SelectedRevenuePeriod" value="Last Week">Last Week</button>
+                                </li>
+                                <li>
+                                    <button class="dropdown-item" type="submit" name="SelectedRevenuePeriod" value="Last Month">Last Month</button>
+                                </li>
+                            </ul>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

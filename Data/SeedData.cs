@@ -1,4 +1,4 @@
-﻿using MaxHelp_System_Upgrade.Models;
+﻿    using MaxHelp_System_Upgrade.Models;
 using Microsoft.AspNetCore.Identity;
 using System;
 
@@ -76,8 +76,8 @@ namespace MaxHelp_System_Upgrade.Data
                 _dataDbContext.SaveChanges();
             }
 
-            // Seeding the Inventory Table
-            if (!_dataDbContext.Inventory.Any())
+            // Seeding the Inventories Table
+            if (!_dataDbContext.Inventories.Any())
             {
                 #region InventoryData
                 var groceriesProducts = new[]
@@ -162,29 +162,30 @@ namespace MaxHelp_System_Upgrade.Data
                             ProductQuantity = random.Next(10, 100), // Ensure some low-stock items
                             ProductPrice = product.Price.ToString(),
                             ReorderThreshold = 30,
-                            BusinessUnitId = unit.Id
+                            BusinessUnitId = unit.Id,
+                            ProductNumber = generateProductNumber()
                         };
 
-                        _dataDbContext.Inventory.Add(inventory);
+                        _dataDbContext.Inventories.Add(inventory);
                     }
                 }
                 _dataDbContext.SaveChanges();
             }
 
-
+            // Seeding the sales table
             if (!_dataDbContext.Sales.Any())
             {
                 var random = new Random();
 
-                var inventories = _dataDbContext.Inventory.ToList();
+                var inventories = _dataDbContext.Inventories.ToList();
                 foreach (var inventory in inventories)
                 {
-                    for (int i = 0; i < random.Next(10, 20); i++) // Ensure at least 10 sales per product
+                    for (int i = 0; i < random.Next(30, 50); i++) // Ensure at least 30 sales per product
                     {
-                        var quantitySold = random.Next(1, 5); // Random quantity per transaction
+                        var quantitySold = random.Next(1, 10); // Random quantity per transaction
                         var amount = quantitySold * int.Parse(inventory.ProductPrice); // Calculate total amount
 
-                        var saleDate = DateTime.Now.AddDays(-random.Next(0, 7)); // Sales within the past week
+                        var saleDate = DateTime.Now.AddDays(-random.Next(0, 31)); // Sales within the past month
 
                         var sale = new Sales
                         {
@@ -200,17 +201,65 @@ namespace MaxHelp_System_Upgrade.Data
                 }
                 _dataDbContext.SaveChanges();
 
-                var lowStockItems = _dataDbContext.Inventory
+                var lowStockItems = _dataDbContext.Inventories
                     .Where(i => i.ProductQuantity <= i.ReorderThreshold)
                     .ToList();
 
                 if (!lowStockItems.Any())
                 {
-                    var randomItem = _dataDbContext.Inventory.OrderBy(i => Guid.NewGuid()).First();
+                    var randomItem = _dataDbContext.Inventories.OrderBy(i => Guid.NewGuid()).First();
                     randomItem.ProductQuantity = 5; // Make it low stock
                     _dataDbContext.SaveChanges();
                 }
             }
+
+            // Seeding the Feedback table
+            if (!_dataDbContext.Feedbacks.Any())
+            {
+                var random = new Random();
+                var businessUnits = _dataDbContext.BusinessUnits.ToList();
+                var divisions = _dataDbContext.BusinessUnits.Select(bu => bu.Name).ToArray();
+            
+                foreach (var unit in businessUnits)
+                {
+                    for (int i = 0; i < 20; i++)
+                    {
+                        var feedback = new Feedback
+                        {
+                            SenderEmail = $"user{i}@example.com",
+                            Message = $"This is a sample feedback message number {i} for testing purposes.",
+                            DivisionOfComplaint = divisions[random.Next(divisions.Length)],
+                            DateSent = DateTime.Now.AddDays(-random.Next(0, 60)),
+                            IsRead = i % 2 == 0,
+                            BusinessUnitId = unit.Id
+                        };
+
+                        _dataDbContext.Feedbacks.Add(feedback);
+                    }
+                }
+
+                _dataDbContext.SaveChanges();
+            }
+        }
+
+        private static string generateProductNumber()
+        {
+            var random = new Random();
+            string accumulator = "";
+
+            for (int i = 1; i <= 7; i++)
+            {
+                string holder;
+
+                if (i == 1)
+                    holder = random.Next(1, 9).ToString();
+
+                holder = random.Next(0, 9).ToString();
+
+                accumulator += holder;
+            }
+
+            return accumulator;
         }
     }
 }

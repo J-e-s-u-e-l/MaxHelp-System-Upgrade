@@ -12,7 +12,8 @@ namespace MaxHelp_System_Upgrade.Data
         public DbSet<Inventory> InventoryItems { get; set; }
         public DbSet<FinancialReport> FinancialReports { get; set; }
         public DbSet<Sales> Sales { get; set; }
-        public DbSet<Inventory> Inventory { get; set; }
+        public DbSet<Inventory> Inventories { get; set; }
+        public DbSet<Feedback> Feedbacks { get; set; }
 
     }
 }

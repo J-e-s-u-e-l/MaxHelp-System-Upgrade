@@ -1,0 +1,44 @@
+﻿@model IEnumerable<Inventory>
+
+@{
+    ViewData["Title"] = "Inventory";
+}
+
+<h1>Inventory</h1>
+
+<!-- Search Bar -->
+<form method="get" action="@Url.Action("Index")">
+    <input type="text" name="searchQuery" placeholder="Search products..." value="@ViewBag.SearchQuery" />
+    <button type="submit">Search</button>
+</form>
+
+<!-- Add Product Button -->
+<a href="@Url.Action("AddProduct")" class="btn btn-primary">Add New Product</a>
+
+<!-- Inventory Table -->
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Product Number</th>
+            <th>Stock Quantity</th>
+            <th>Price (₦)</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ProductName</td>
+                <td>@item.ProductNumber</td>
+                <td>@item.ProductQuantity</td>
+                <td>@item.ProductPrice</td>
+                <td>
+                    <a href="@Url.Action("EditProduct", new { id = item.Id })" class="btn btn-warning">Edit</a>
+                    <a href="@Url.Action("DeleteProduct", new { id = item.Id })" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

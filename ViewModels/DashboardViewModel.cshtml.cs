@@ -6,6 +6,7 @@
         public decimal TotalSalesYesterday { get; set; }
         public List<TopSalesItem> TopSales { get; set; }
         public int TotalUnitSoldThisWeek { get; set; }
+        public string SelectedSalesPeriod { get; set; }
         public decimal TotalRevenue { get; set; }
         public int LowStockItemsCount { get; set; }
     }

@@ -1,8 +1,9 @@
-﻿@{
+﻿@model MaxHelp_System_Upgrade.ViewModels.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
 }
 
-@model MaxHelp_System_Upgrade.ViewModels.DashboardViewModel
-@* @model DashboardViewModel *@
+<h1>Dashboard</h1>
 
 <div class="container mt-4">
     <div class="row">
@@ -11,14 +12,35 @@
             <div class="card">
                 <div class="card-body">
                     <h5>Total Sales</h5>
-                    <p>₦@Model.TotalSalesToday</p>
+
+                    <p>₦@if (string.IsNullOrEmpty(Model.SelectedSalesPeriod) || Model.SelectedSalesPeriod == "Today")
+                        {
+                            @Model.TotalSalesToday
+                        }
+                        else if (Model.SelectedSalesPeriod == "Yesterday")
+                        {
+                            @Model.TotalSalesYesterday
+                        }
+
                     <div class="dropdown">
+                        <!-- Dropdown Button: Dynamic Text -->
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="salesDropdown" data-bs-toggle="dropdown">
-                            View Sales
+                            @(string.IsNullOrEmpty(Model.SelectedSalesPeriod) ? "Today" : Model.SelectedSalesPeriod)
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="salesDropdown">
-                            <li><a class="dropdown-item" href="#">Today: ₦@Model.TotalSalesToday</a></li>
-                            <li><a class="dropdown-item" href="#">Yesterday: ₦@Model.TotalSalesYesterday</a></li>
+                            <!-- Dropdown Links -->
+                            <li>
+                                <form method="get" action="@Url.Action("Index")">
+                                    <input type="hidden" name="SelectedSalesPeriod" value="Today" />
+                                    <button type="submit" class="dropdown-item">Today: ₦@Model.TotalSalesToday</button>
+                                </form>
+                            </li>
+                            <li>
+                                <form method="get" action="@Url.Action("Index")">
+                                    <input type="hidden" name="SelectedSalesPeriod" value="Yesterday" />
+                                    <button type="submit" class="dropdown-item">Yesterday: ₦@Model.TotalSalesYesterday</button>
+                                </form>
+                            </li>
                         </ul>
                     </div>
                 </div>

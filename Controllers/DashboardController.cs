@@ -12,7 +12,7 @@ namespace MaxHelp_System_Upgrade.Controllers
         {
             _dataDbContext = dataDbContext;
         }
-        public IActionResult Index()
+        public IActionResult Index(string selectedSalesPeriod)
         {
             var businessUnitId = int.Parse(User.Claims.First(x => x.Type == "BusinessUnitId").Value);
 
@@ -48,9 +48,11 @@ namespace MaxHelp_System_Upgrade.Controllers
                 .Where(s => s.BusinessUnitId == businessUnitId)
                 .Sum(s => (decimal?)s.Amount) ?? 0,
 
-                LowStockItemsCount = _dataDbContext.Inventory
+                LowStockItemsCount = _dataDbContext.Inventories
                 .Where(i => i.BusinessUnitId == businessUnitId && i.ProductQuantity < i.ReorderThreshold)
-                .Count()
+                .Count(),
+
+                SelectedSalesPeriod = selectedSalesPeriod
             };
 
             return View(viewModel);
