@@ -13,12 +13,16 @@ namespace MaxHelp_System_Upgrade.Controllers
             _dataDbContext = dataDbContext;
         }
 
-        public IActionResult Index(string search = "", string sortBy = "latest")
+        public IActionResult Index(string searchQuery, string sortBy = "latest")
         {
+            ViewBag.SearchQuery = searchQuery;
+
             var businessUnitId = int.Parse(User.Claims.First(x => x.Type == "BusinessUnitId").Value);
 
+            // Fetch data that for the Feedback View
             var feedbacks = _dataDbContext.Feedbacks
                 .Where(f => f.BusinessUnitId == businessUnitId)
+                .ToList() // Bring data into memory for operations EF cannot handle
                 .Select(f => new FeedbackViewModel
                 {
                     Id = f.Id,
@@ -26,23 +30,28 @@ namespace MaxHelp_System_Upgrade.Controllers
                     MessageSnippet = $"{f.Message.Substring(0, Math.Min(15, f.Message.Length))}...",
                     DivisionOfComplaint = f.DivisionOfComplaint,
                     DateSentFormatted = f.DateSent,
-                    //DateSentFormatted = FormatDate(f.DateSent),
                     IsRead = f.IsRead,
                     EmailIconColor = GetRandomColor(f.Id)
                 });
 
-            if(!string.IsNullOrEmpty(search))
+            // Apply the search filter in-memory
+            if (!string.IsNullOrEmpty(searchQuery))
             {
-                feedbacks = feedbacks.Where(f =>
-                    f.SenderEmail.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                    f.MessageSnippet.Contains(search, StringComparison.OrdinalIgnoreCase));
+                feedbacks = feedbacks
+                    .Where(f =>
+                        f.SenderEmail.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) ||
+                        f.MessageSnippet.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
             }
 
-            feedbacks = sortBy == "earliest" ? feedbacks.OrderBy(f => f.DateSentFormatted) : feedbacks.OrderByDescending(f => f.DateSentFormatted);
+            // Sort the feedbacks based on the sort criteria
+            feedbacks = sortBy == "earliest"
+                ? feedbacks.OrderBy(f => f.DateSentFormatted).ToList()
+                : feedbacks.OrderByDescending(f => f.DateSentFormatted).ToList();
 
-
-            return View(feedbacks.ToList());
+            return View(feedbacks);
         }
+
 
         public IActionResult MarkAllAsSeen()
         {

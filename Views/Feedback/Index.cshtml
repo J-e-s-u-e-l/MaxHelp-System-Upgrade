@@ -8,7 +8,14 @@
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between mb-3">
-        <input type="text" class="form-control w-50" placeholder="Search..." id="searchBar" onkeyup="filterTable()">
+        <!-- Search Bar -->
+        <form method="get" action="@Url.Action("Index")">
+            <input type="text" name="searchQuery" placeholder="Search..." value="@ViewBag.SearchQuery" />
+            <button type="submit">Search</button>
+        </form>
+
+        @* <input type="text" class="form-control w-50" placeholder="Search..." id="searchBar" onkeyup="filterTable()"> *@
+
         <div class="dropdown me-3">
             <button class="btn btn-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown">
                 Filter

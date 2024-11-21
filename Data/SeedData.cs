@@ -19,7 +19,8 @@ namespace MaxHelp_System_Upgrade.Data
                     new BusinessUnit { Name = "Groceries", Location = "Mainland" },
                     new BusinessUnit { Name = "BookShop", Location = "Island" },
                     new BusinessUnit { Name = "Restaurant", Location = "Mainland" },
-                    new BusinessUnit { Name = "Bottled water", Location = "Island" }
+                    new BusinessUnit { Name = "Bottled water", Location = "Island" },
+                    new BusinessUnit { Name = "CentralMgt", Location = "Island" }
                 );
                 await _dataDbContext.SaveChangesAsync();
             }
@@ -29,12 +30,20 @@ namespace MaxHelp_System_Upgrade.Data
             {
                 var passwordHasher = new PasswordHasher<User>();
 
+                var centralMgtAdmin = new User
+                {
+                    UserName = "centralMgtAdmin",
+                    Email = "centralmgtadmin@maxhelp.com",
+                    NormalizedEmail = "CENTRALMGTADMIN@MAXHELP.COM",
+                    BusinessUnitId = _dataDbContext.BusinessUnits.First(x => x.Name == "CentralMgt").Id,
+                    TwoFactorEnabled = false
+                };
+
                 var groceriesAdmin = new User
                 {
                     UserName = "GroceriesAdmin",
                     Email = "groceriesadmin@maxhelp.com",
                     NormalizedEmail = "GROCERIESADMIN@MAXHELP.COM",
-                    //NormalizedUserName
                     BusinessUnitId = _dataDbContext.BusinessUnits.First(x => x.Name == "Groceries").Id,
                     TwoFactorEnabled = false
                 };
@@ -228,7 +237,7 @@ namespace MaxHelp_System_Upgrade.Data
                         {
                             SenderEmail = $"user{i}@example.com",
                             Message = $"This is a sample feedback message number {i} for testing purposes.",
-                            DivisionOfComplaint = divisions[random.Next(divisions.Length)],
+                            DivisionOfComplaint = unit.Name,
                             DateSent = DateTime.Now.AddDays(-random.Next(0, 60)),
                             IsRead = i % 2 == 0,
                             BusinessUnitId = unit.Id

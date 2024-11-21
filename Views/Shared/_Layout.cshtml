@@ -30,7 +30,17 @@
                         <path class="svg-path" d="M16.3772 15.7617C16.3772 14.2744 16.968 12.848 18.0197 11.7963C19.0713 10.7446 20.4977 10.1538 21.985 10.1538C23.4723 10.1538 24.8987 10.7446 25.9504 11.7963C27.002 12.848 27.5929 14.2744 27.5929 15.7617C27.5929 22.3041 30.3968 24.1734 30.3968 24.1734H13.5732C13.5732 24.1734 16.3772 22.3041 16.3772 15.7617Z" stroke="#121212" stroke-opacity="0.8" stroke-width="1.86928" stroke-linecap="round" stroke-linejoin="round" />
                         <path class="svg-path" d="M20.3965 27.9119C20.5529 28.1964 20.7829 28.4337 21.0624 28.599C21.3419 28.7643 21.6607 28.8515 21.9854 28.8515C22.3101 28.8515 22.6288 28.7643 22.9083 28.599C23.1878 28.4337 23.4178 28.1964 23.5743 27.9119" stroke="#121212" stroke-opacity="0.8" stroke-width="1.86928" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
+                    <span id="notificationBadge" class="badge bg-danger">0</span>
                 </button>
+
+
+                @* <button id="notificationBell" class="notification-btn btn ms-auto me-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="44" height="39" viewBox="0 0 44 39" fill="none">
+                        <rect class="svg-bg" width="43.9706" height="39" rx="8.28431" fill="#F2F1F1" />
+                        <path class="svg-path" d="M16.3772 15.7617C16.3772 14.2744 16.968 12.848 18.0197 11.7963C19.0713 10.7446 20.4977 10.1538 21.985 10.1538C23.4723 10.1538 24.8987 10.7446 25.9504 11.7963C27.002 12.848 27.5929 14.2744 27.5929 15.7617C27.5929 22.3041 30.3968 24.1734 30.3968 24.1734H13.5732C13.5732 24.1734 16.3772 22.3041 16.3772 15.7617Z" stroke="#121212" stroke-opacity="0.8" stroke-width="1.86928" stroke-linecap="round" stroke-linejoin="round" />
+                        <path class="svg-path" d="M20.3965 27.9119C20.5529 28.1964 20.7829 28.4337 21.0624 28.599C21.3419 28.7643 21.6607 28.8515 21.9854 28.8515C22.3101 28.8515 22.6288 28.7643 22.9083 28.599C23.1878 28.4337 23.4178 28.1964 23.5743 27.9119" stroke="#121212" stroke-opacity="0.8" stroke-width="1.86928" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button> *@
                 
                 <a asp-controller="Settings" asp-action="Index">
                     <button id="profileButton" class="profile-btn btn">
@@ -64,26 +74,155 @@
         </main>
     </div>
 
+    @* <!-- Notification Panel -->
+    <div id="notificationPanel" class="notification-panel">
+        <!-- Notifications will be dynamically populated here -->
+    </div> *@
+
     <!-- Notification Panel -->
     <div id="notificationPanel" class="notification-panel">
-        <div class="notification-header">
-            <h5>Notifications</h5>
-            <button id="closeNotification" class="btn btn-sm btn-outline-danger">X</button>
+        <div id="loadingSpinner" class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
         </div>
-        <div class="notification-item">
-            <h3>Bookshop</h3>
-            <p>Kellogg's cornflakes is almost out of stock.</p>
-        </div>
-        <div class="notification-item">
-            <h3>Grocery</h3>
-            <p>Tomato paste is running low.</p>
-        </div>
-        <!-- Add more notifications dynamically -->
+        <button id="closeNotification" class="btn btn-sm btn-outline-danger">X</button>
+        <!-- Notifications will be dynamically populated here -->
     </div>
+
+
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Notification Panel Toggle
+        const notificationPanel = document.getElementById("notificationPanel");
+        const notificationBell = document.getElementById("notificationBell");
+
+        // Function to toggle panel visibility
+        function openNotificationPanel() {
+            notificationPanel.classList.add("active");
+        }
+
+        function closeNotificationPanel() {
+            notificationPanel.classList.remove("active");
+        }
+
+        // Attach event listener to notification bell to open the panel
+        notificationBell.addEventListener("click", openNotificationPanel);
+
+        // Attach event listener to close button
+        function attachCloseEventListener() {
+            const closeButton = document.getElementById("closeNotification");
+            if (closeButton) {
+                closeButton.addEventListener("click", closeNotificationPanel);
+            }
+        }
+
+        // AJAX request to load notifications
+        document.addEventListener("DOMContentLoaded", function () {
+            const notificationPanel = document.getElementById("notificationPanel");
+            const notificationBadge = document.getElementById("notificationBadge");
+
+            fetch('https://localhost:7171/Notification/GetNotifications')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Notifications:', data);
+
+                    // Hide the loading spinner
+                    document.getElementById("loadingSpinner").style.display = "none";
+
+                    // Update the badge count
+                    const notificationCount = data.length;
+                    if (notificationCount > 0) {
+                        notificationBadge.textContent = notificationCount;
+                        notificationBadge.style.display = 'inline';
+                    } else {
+                        notificationBadge.style.display = 'none';
+                    }
+
+                    // Clear existing content inside the notification panel
+                    notificationPanel.innerHTML = `
+                        <div class="notification-header">
+                            <h5>Notifications</h5>
+                            <button id="closeNotification" class="btn btn-sm btn-outline-danger">X</button>
+                        </div>
+                    `;
+
+                    // Populate the notification panel with data
+                    data.forEach(notification => {
+                        const notificationItem = document.createElement('div');
+                        notificationItem.className = 'notification-item';
+                        notificationItem.innerHTML = `
+                            <h3>${notification.businessUnitName}</h3>
+                            <p>${notification.itemName} is almost out of stock.</p>
+                        `;
+                        notificationPanel.appendChild(notificationItem);
+                    });
+
+                    // Rebind the close button functionality
+                    document.getElementById("closeNotification").addEventListener("click", () => {
+                        notificationPanel.classList.remove("active");
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching notifications:', error);
+                    document.getElementById("loadingSpinner").style.display = "none";
+                    notificationPanel.innerHTML = `<p>Error loading notifications. Please try again later.</p>`;
+                });
+        });
+
+
+
+        // document.addEventListener("DOMContentLoaded", function () {
+        //     const notificationPanel = document.getElementById("notificationPanel");
+
+        //     fetch('https://localhost:7171/Notification/GetNotifications')
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             console.log('Notifications:', data); // Log the data for debugging
+
+        //             // Hide the loading spinner
+        //             document.getElementById("loadingSpinner").style.display = "none";
+
+        //             // Clear existing content inside the notification panel
+        //             notificationPanel.innerHTML = `
+        //                 <div class="notification-header">
+        //                     <h5>Notifications</h5>
+        //                     <button id="closeNotification" class="btn btn-sm btn-outline-danger">X</button>
+        //                 </div>
+        //             `;
+
+        //             // Check if notifications are empty
+        //             if (!data || data.length === 0) {
+        //                 const noNotificationsItem = document.createElement('div');
+        //                 noNotificationsItem.className = 'notification-item';
+        //                 noNotificationsItem.innerHTML = `<p>No notifications available.</p>`;
+        //                 notificationPanel.appendChild(noNotificationsItem);
+        //                 return;
+        //             }
+
+        //             // Populate the notification panel with data
+        //             data.forEach(notification => {
+        //                 const notificationItem = document.createElement('div');
+        //                 notificationItem.className = 'notification-item';
+        //                 notificationItem.innerHTML = `
+        //                     <h3>${notification.businessUnitName}</h3>
+        //                     <p>${notification.itemName} is almost out of stock.</p>
+        //                 `;
+        //                 notificationPanel.appendChild(notificationItem);
+        //             });
+
+        //             // Rebind the close button functionality
+        //             document.getElementById("closeNotification").addEventListener("click", () => {
+        //                 notificationPanel.classList.remove("active");
+        //             });
+        //         })
+        //         .catch(error => {
+        //             console.error('Error fetching notifications:', error);
+        //             document.getElementById("loadingSpinner").style.display = "none";
+        //             notificationPanel.innerHTML = `<p>Error loading notifications. Please try again later.</p>`;
+        //         });
+        // });
+
         // Sidebar Toggle
         const sidebar = document.getElementById("sidebar");
         const mainContent = document.getElementById("mainContent");
@@ -95,15 +234,6 @@
         closeSidebarBtn.addEventListener("click", () => {
             sidebar.classList.remove("active");
             mainContent.classList.remove("shifted");
-        });
-
-        // Notification Panel Toggle
-        const notificationPanel = document.getElementById("notificationPanel");
-        document.getElementById("notificationBell").addEventListener("click", () => {
-            notificationPanel.classList.add("active");
-        });
-        document.getElementById("closeNotification").addEventListener("click", () => {
-            notificationPanel.classList.remove("active");
         });
     </script>
     @await RenderSectionAsync("Scripts", required: false)

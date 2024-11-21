@@ -9,7 +9,7 @@
         public string ProductPrice { get; set; }
         public int ReorderThreshold { get; set; } = 30;
         public int BusinessUnitId { get; set; }
-        public BusinessUnit BusinessUnit { get; set; }
+        public virtual BusinessUnit BusinessUnit { get; set; }    // Navigation property
 
         private static string generateProductNumber()
         {
