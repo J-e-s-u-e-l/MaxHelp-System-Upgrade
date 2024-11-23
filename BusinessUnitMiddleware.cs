@@ -24,6 +24,7 @@ namespace MaxHelp_System_Upgrade
                 {
                     var claimsIdemtity = (ClaimsIdentity)httpContext.User.Identity;
                     claimsIdemtity.AddClaim(new Claim("BusinessUnitId", user.BusinessUnitId.ToString()));
+                    claimsIdemtity.AddClaim(new Claim("BusinessUnitName", user.UserName.ToString()));
                 }
             }
 

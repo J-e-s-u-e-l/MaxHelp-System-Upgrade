@@ -17,10 +17,27 @@ namespace MaxHelp_System_Upgrade.Controllers
         public IActionResult GetNotifications()
         {
             var businessUnitId = int.Parse(User.Claims.First(x => x.Type == "BusinessUnitId").Value);
+            var businessUnitName = User.Claims.First(x => x.Type == "BusinessUnitName").Value;
 
-            var notifications = _dataDbContext.InventoryItems
-                .Where(item => item.BusinessUnitId == businessUnitId && item.ProductQuantity <= item.ReorderThreshold)
-                .Include(item => item.BusinessUnit)
+            IQueryable<Inventory> query;
+
+            if (businessUnitName == "centralMgtAdmin")
+            {
+                // Central Management: Fetch notifications for all units
+                query = _dataDbContext.InventoryItems
+                    .Where(item => item.ProductQuantity <= item.ReorderThreshold)
+                    .Include(item => item.BusinessUnit);
+            }
+            else
+            {
+                // Individual Business Unit: Fetch notifications for the logged-in unit
+                query = _dataDbContext.InventoryItems
+                    .Where(item => item.BusinessUnitId == businessUnitId && item.ProductQuantity <= item.ReorderThreshold)
+                    .Include(item => item.BusinessUnit);
+            }
+
+            // Project to the required format
+            var notifications = query
                 .Select(item => new
                 {
                     BusinessUnitName = item.BusinessUnit.Name,
@@ -28,8 +45,9 @@ namespace MaxHelp_System_Upgrade.Controllers
                 })
                 .ToList();
 
-            //return Json(new {data = notifications});
+            //return Json(new { data = notifications });
             return Json(notifications);
         }
+
     }
 }

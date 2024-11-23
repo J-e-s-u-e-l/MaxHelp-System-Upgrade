@@ -1,0 +1,89 @@
+﻿@model MaxHelp_System_Upgrade.ViewModels.CentralMgtDashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+
+<h1>Central Management Dashboard</h1>
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Total Sales Card -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Total Units Sold</h5>
+                    <p>@Model.TotalUnitSoldToday units sold today</p>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                            Period: @(Model.SelectedSalesPeriod ?? "Today")
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="?selectedSalesPeriod=Today">Today: @Model.TotalUnitSoldToday</a></li>
+                            <li><a class="dropdown-item" href="?selectedSalesPeriod=ThisWeek">This Week: @Model.TotalUnitSoldThisWeek</a></li>
+                            <li><a class="dropdown-item" href="?selectedSalesPeriod=LastMonth">Last Month: @Model.TotalUnitSoldLastMonth</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Sales -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Top Sales</h5>
+                    <ul class="list-group">
+                        @foreach (var item in Model.TopSalesToday)
+                        {
+                            <li class="list-group-item">
+                                @item.ItemName - @item.SalesCount Sales - ₦@string.Format("{0:n}", item.TotalAmount)
+                            </li>
+                        }
+                    </ul>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                            Period: @(Model.SelectedSalesPeriod ?? "Today")
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="?selectedSalesPeriod=Today">Today</a></li>
+                            <li><a class="dropdown-item" href="?selectedSalesPeriod=ThisWeek">This Week</a></li>
+                            <li><a class="dropdown-item" href="?selectedSalesPeriod=LastMonth">Last Month</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <!-- Revenue Collection -->
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Revenue Collection</h5>
+                    <ul class="list-group">
+                        @foreach (var revenue in Model.TotalRevenueToday)
+                        {
+                            <li class="list-group-item">
+                                @revenue.BusinessUnitId - ₦@string.Format("{0:n}", revenue.Revenue)
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <!-- Low Stock Items -->
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Low Stock Items</h5>
+                    <p>@Model.LowStockItems.Count items are low on stock</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>>

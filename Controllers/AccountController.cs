@@ -34,7 +34,13 @@ namespace MaxHelp_System_Upgrade.Controllers
                     var result = await _signInManager.PasswordSignInAsync(user, model.Password, isPersistent: model.RememberMe, lockoutOnFailure: false);
 
                     if (result.Succeeded)
-                        return RedirectToAction("Index", "Dashboard");
+                    {
+                        if (user.UserName == "centralMgtAdmin")
+                            return RedirectToAction("Index", "CentralMgtDashboard");
+
+                        else
+                            return RedirectToAction("Index", "Dashboard");
+                    }
                 }
                 ModelState.AddModelError(string.Empty, "Invalid Login Attempt!");
             }

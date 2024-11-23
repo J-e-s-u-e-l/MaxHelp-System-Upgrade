@@ -75,12 +75,13 @@ namespace MaxHelp_System_Upgrade.Data
                     TwoFactorEnabled = false
                 };
 
+                centralMgtAdmin.PasswordHash = passwordHasher.HashPassword(groceriesAdmin, "centralmgt");
                 groceriesAdmin.PasswordHash = passwordHasher.HashPassword(groceriesAdmin, "groceries");
                 bookShopAdmin.PasswordHash = passwordHasher.HashPassword(groceriesAdmin, "bookshop");
                 restaurantAdmin.PasswordHash = passwordHasher.HashPassword(groceriesAdmin, "restaurant");
                 bottledWaterAdmin.PasswordHash = passwordHasher.HashPassword(groceriesAdmin, "bottledwater");
 
-                _dataDbContext.Users.AddRange(groceriesAdmin, bookShopAdmin, restaurantAdmin, bottledWaterAdmin);
+                _dataDbContext.Users.AddRange(centralMgtAdmin, groceriesAdmin, bookShopAdmin, restaurantAdmin, bottledWaterAdmin);
 
                 _dataDbContext.SaveChanges();
             }
@@ -152,10 +153,15 @@ namespace MaxHelp_System_Upgrade.Data
 
                 var businessUnits = _dataDbContext.BusinessUnits.ToList();
 
+                int unitsToProcess = 4;  // This ensures only 4 units (Groceries, BookShop, Restaurant and Bottled water) are seeded with inventory data
+
                 foreach (var unit in businessUnits)
                 {
+                    if (unitsToProcess <= 0)
+                        break;
+
                     var products = unit.Name switch
-                    {
+                    { 
                         "Groceries" => groceriesProducts,
                         "BookShop" => bookShopProducts,
                         "Restaurant" => restaurantProducts,
@@ -177,6 +183,8 @@ namespace MaxHelp_System_Upgrade.Data
 
                         _dataDbContext.Inventories.Add(inventory);
                     }
+
+                    unitsToProcess--;       // Decrement the value of unitsToProcess in order to stop the inventory seeding at the 4th unit, excluding the CMS
                 }
                 _dataDbContext.SaveChanges();
             }
@@ -229,8 +237,13 @@ namespace MaxHelp_System_Upgrade.Data
                 var businessUnits = _dataDbContext.BusinessUnits.ToList();
                 var divisions = _dataDbContext.BusinessUnits.Select(bu => bu.Name).ToArray();
             
+                int unitsToProcess = 4;  // This ensures only 4 units (Groceries, BookShop, Restaurant and Bottled water) are seeded
+
                 foreach (var unit in businessUnits)
                 {
+                    if (unitsToProcess <= 0)
+                        break;
+
                     for (int i = 0; i < 20; i++)
                     {
                         var feedback = new Feedback
@@ -245,6 +258,7 @@ namespace MaxHelp_System_Upgrade.Data
 
                         _dataDbContext.Feedbacks.Add(feedback);
                     }
+                    unitsToProcess--;       // Decrement the value of unitsToProcess in order to stop the seeding at the 4th unit, excluding the CMS
                 }
 
                 _dataDbContext.SaveChanges();

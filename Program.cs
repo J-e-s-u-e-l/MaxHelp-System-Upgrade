@@ -59,6 +59,11 @@ namespace MaxHelp_System_Upgrade
                 name: "default",
                 pattern: "{controller=Account}/{action=Login}/{id?}");
 
+            /*app.MapControllerRoute(
+                name: "centralManagementDashboard",
+                pattern: "CentralManagement/Dashboard/{action=Index}/{id?}",
+                defaults: new { controller = "Dashboard" });*/
+
             app.Run();
         }
     }
