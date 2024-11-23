@@ -1,4 +1,5 @@
 ﻿using MaxHelp_System_Upgrade.Data;
+using MaxHelp_System_Upgrade.Models;
 using MaxHelp_System_Upgrade.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,8 +16,30 @@ namespace MaxHelp_System_Upgrade.Controllers
             _dataDbContext = dataDbContext;
         }
 
-        public IActionResult Index(string selectedSalesPeriod, string selectedRevenuePeriod)
+        public IActionResult Index(string selectedSalesPeriod, string selectedRevenuePeriod, string selectedTopSalesPeriod)
         {
+            IQueryable<Sales> selectedSalesQuery;
+
+            switch (selectedRevenuePeriod)
+            {
+                case "Today":
+                    selectedSalesQuery = _dataDbContext.Sales.Where(s => s.SaleDate.Date == DateTime.Today);
+                    break;
+
+                case "This Week":
+                    selectedSalesQuery = _dataDbContext.Sales.Where(s => s.SaleDate >= DateTime.Today.AddDays(-7));
+                    break;
+
+                case "Last Month":
+                    selectedSalesQuery = _dataDbContext.Sales.Where(s => s.SaleDate >= DateTime.Today.AddMonths(-1));
+                    break;
+
+                default:
+                    selectedSalesQuery = _dataDbContext.Sales.Where(s => s.SaleDate.Date == DateTime.Today);
+                    break;
+            }
+
+
             // Fetch Data for the dashboard
             var viewModel = new CentralMgtDashboardViewModel
             {
@@ -74,30 +97,32 @@ namespace MaxHelp_System_Upgrade.Controllers
                 TotalRevenueToday = _dataDbContext.Sales
                     .Where(s => s.SaleDate.Date == DateTime.Today)
                     .GroupBy(s => s.BusinessUnitId)
-                    //.GroupBy(s => s.BusinessUnitId.Name  )
                     .Select(g => new RevenueItem
                     {
-                        BusinessUnitId = g.Key,
+                        // Join Sales with BusinessUnits to get the name
+                        BusinessUnitName = _dataDbContext.BusinessUnits.FirstOrDefault(bu => bu.Id == g.Key).Name ?? "Unknown BU", // Handle missing business unit
                         Revenue = g.Sum(x => x.Amount)
                     })
                     .ToList(),
 
                 TotalRevenueThisWeek = _dataDbContext.Sales
-                    .Where(s => s.SaleDate >= DateTime.Today.AddDays(-7))
-                    .GroupBy(s => s.BusinessUnitId)
-                    .Select(g => new RevenueItem
-                    {
-                        BusinessUnitId = g.Key,
-                        Revenue = g.Sum(x => x.Amount)
-                    })
-                    .ToList(),
+                  .Where(s => s.SaleDate >= DateTime.Today.AddDays(-7))
+                  .GroupBy(s => s.BusinessUnitId)
+                  .Select(g => new RevenueItem
+                  {
+                      // Join Sales with BusinessUnits to get the name
+                      BusinessUnitName = _dataDbContext.BusinessUnits.FirstOrDefault(bu => bu.Id == g.Key).Name ?? "Unknown BU", // Handle missing business unit
+                      Revenue = g.Sum(x => x.Amount)
+                  })
+                  .ToList(),
 
                 TotalRevenueLastMonth = _dataDbContext.Sales
                     .Where(s => s.SaleDate >= DateTime.Today.AddMonths(-1))
                     .GroupBy(s => s.BusinessUnitId)
                     .Select(g => new RevenueItem
                     {
-                        BusinessUnitId = g.Key,
+                        // Join Sales with BusinessUnits to get the name
+                        BusinessUnitName = _dataDbContext.BusinessUnits.FirstOrDefault(bu => bu.Id == g.Key).Name ?? "Unknown BU", // Handle missing business unit
                         Revenue = g.Sum(x => x.Amount)
                     })
                     .ToList(),
@@ -112,11 +137,20 @@ namespace MaxHelp_System_Upgrade.Controllers
                     })
                     .ToList(),
 
+                // Calculating total revenue for all business units
+                TotalRevenueForAllBU = selectedSalesQuery.Sum(s => s.Amount),
+
+                SelectedRevenuePeriod = selectedRevenuePeriod,
                 SelectedSalesPeriod = selectedSalesPeriod,
-                SelectedRevenuePeriod = selectedRevenuePeriod
+                SelectedTopSalesPeriod = selectedTopSalesPeriod
             };
 
             return View(viewModel);
         }
+
+        
     }
 }
+// Calculate total revenue after selection
+
+                

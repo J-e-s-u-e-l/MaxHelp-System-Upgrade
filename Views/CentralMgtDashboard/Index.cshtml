@@ -12,16 +12,29 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-body">
-                    <h5>Total Units Sold</h5>
-                    <p>@Model.TotalUnitSoldToday units sold today</p>
+                    <h5>Total Units Sold Across All BU</h5>
+
+                        @if (string.IsNullOrEmpty(Model.SelectedSalesPeriod) || Model.SelectedSalesPeriod == "Today")
+                        {
+                            <p>@Model.TotalUnitSoldToday Units</P>
+                        }
+                        else if (Model.SelectedSalesPeriod == "This Week")
+                        {
+                            <p>@Model.TotalUnitSoldThisWeek Units</p>
+                        }
+                        else if (Model.SelectedSalesPeriod == "Last Month")
+                        {
+                            <p>@Model.TotalUnitSoldLastMonth Units</p>
+                        }
+
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                            Period: @(Model.SelectedSalesPeriod ?? "Today")
+                            @(Model.SelectedSalesPeriod ?? "Today")
                         </button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="?selectedSalesPeriod=Today">Today: @Model.TotalUnitSoldToday</a></li>
-                            <li><a class="dropdown-item" href="?selectedSalesPeriod=ThisWeek">This Week: @Model.TotalUnitSoldThisWeek</a></li>
-                            <li><a class="dropdown-item" href="?selectedSalesPeriod=LastMonth">Last Month: @Model.TotalUnitSoldLastMonth</a></li>
+                            <li><a class="dropdown-item" href="?selectedSalesPeriod=Today&selectedTopSalesPeriod=@Model.SelectedTopSalesPeriod&selectedRevenuePeriod=@Model.SelectedRevenuePeriod">Today</a></li>
+                            <li><a class="dropdown-item" href="?selectedSalesPeriod=This Week&selectedTopSalesPeriod=@Model.SelectedTopSalesPeriod&selectedRevenuePeriod=@Model.SelectedRevenuePeriod">This Week</a></li>
+                            <li><a class="dropdown-item" href="?selectedSalesPeriod=Last Month&selectedTopSalesPeriod=@Model.SelectedTopSalesPeriod&selectedRevenuePeriod=@Model.SelectedRevenuePeriod">Last Month</a></li>
                         </ul>
                     </div>
                 </div>
@@ -33,22 +46,47 @@
             <div class="card">
                 <div class="card-body">
                     <h5>Top Sales</h5>
-                    <ul class="list-group">
-                        @foreach (var item in Model.TopSalesToday)
+                    <ul style="list-style: none;" class="list-group">
+                        @if (string.IsNullOrEmpty(Model.SelectedTopSalesPeriod) || Model.SelectedTopSalesPeriod == "Today")
                         {
-                            <li class="list-group-item">
-                                @item.ItemName - @item.SalesCount Sales - ₦@string.Format("{0:n}", item.TotalAmount)
-                            </li>
+                            if (Model.TopSalesToday.Count == 0)
+                            {
+                                <li>No Top Sales To Display</li>
+                            }
+                            @foreach (var item in Model.TopSalesToday)
+                            {
+                                <li class="TopSales-list-group-item">
+                                    @item.ItemName - @item.SalesCount Sales - ₦@string.Format("{0:n}", item.TotalAmount)
+                                </li>
+                            }
+                        }
+                        else if (Model.SelectedSalesPeriod == "This Week")
+                        {
+                            @foreach (var item in Model.TopSalesThisWeek)
+                            {
+                                <li class="TopSales-list-group-item">
+                                    @item.ItemName - @item.SalesCount Sales - ₦@string.Format("{0:n}", item.TotalAmount)
+                                </li>
+                            }
+                        }
+                        else if (Model.SelectedSalesPeriod == "Last Month")
+                        {
+                            @foreach (var item in Model.TopSalesLastMonth)
+                            {
+                                <li class="TopSales-list-group-item">
+                                    @item.ItemName - @item.SalesCount Sales - ₦@string.Format("{0:n}", item.TotalAmount)
+                                </li>
+                            }
                         }
                     </ul>
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                            Period: @(Model.SelectedSalesPeriod ?? "Today")
+                            @(Model.SelectedTopSalesPeriod ?? "Today")
                         </button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="?selectedSalesPeriod=Today">Today</a></li>
-                            <li><a class="dropdown-item" href="?selectedSalesPeriod=ThisWeek">This Week</a></li>
-                            <li><a class="dropdown-item" href="?selectedSalesPeriod=LastMonth">Last Month</a></li>
+                            <li><a class="dropdown-item" href="?selectedTopSalesPeriod=Today&selectedSalesPeriod=@Model.SelectedSalesPeriod&selectedRevenuePeriod=@Model.SelectedRevenuePeriod">Today</a></li>
+                            <li><a class="dropdown-item" href="?selectedTopSalesPeriod=This Week&selectedSalesPeriod=@Model.SelectedSalesPeriod&selectedRevenuePeriod=@Model.SelectedRevenuePeriod">This Week</a></li>
+                            <li><a class="dropdown-item" href="?selectedTopSalesPeriod=Last Month&selectedSalesPeriod=@Model.SelectedSalesPeriod&selectedRevenuePeriod=@Model.SelectedRevenuePeriod">Last Month</a></li>
                         </ul>
                     </div>
                 </div>
@@ -62,14 +100,60 @@
             <div class="card">
                 <div class="card-body">
                     <h5>Revenue Collection</h5>
-                    <ul class="list-group">
+                    <ul style="list-style: none;" class="list-group">
+                        @if (string.IsNullOrEmpty(Model.SelectedRevenuePeriod) || Model.SelectedRevenuePeriod == "Today")
+                        {
+                            if (Model.TotalRevenueToday.Count == 0)
+                            {
+                                <li>No Revenue To Display</li>
+                            }
+                            @foreach (var item in Model.TotalRevenueToday)
+                            {
+                                <li class="TopSales-list-group-item">
+                                    @item.BusinessUnitName - ₦@string.Format("{0:n}", item.Revenue)
+                                </li>
+                            }
+                        }
+                        else if (Model.SelectedRevenuePeriod == "This Week")
+                        {
+                            @foreach (var item in Model.TotalRevenueThisWeek)
+                            {
+                                <li class="TopSales-list-group-item">
+                                    @item.BusinessUnitName - ₦@string.Format("{0:n}", item.Revenue)
+                                </li>
+                            }
+                        }
+                        else if (Model.SelectedRevenuePeriod == "Last Month")
+                        {
+                            @foreach (var item in Model.TotalRevenueLastMonth)
+                            {
+                                <li class="TopSales-list-group-item">
+                                    @item.BusinessUnitName - ₦@string.Format("{0:n}", item.Revenue)
+                                </li>
+                            }
+                        }
+                        <li class="TopSales-list-group-item">
+                            TOTAL - ₦@string.Format("{0:n}", Model.TotalRevenueForAllBU)
+                        </li>
+                    </ul>
+                    @* <ul class="list-group">
                         @foreach (var revenue in Model.TotalRevenueToday)
                         {
-                            <li class="list-group-item">
-                                @revenue.BusinessUnitId - ₦@string.Format("{0:n}", revenue.Revenue)
+                            <li class="TopSales-list-group-item">
+                                @revenue.BusinessUnitName - ₦@string.Format("{0:n}", revenue.Revenue)
                             </li>
                         }
-                    </ul>
+                    </ul> *@
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                            @(Model.SelectedRevenuePeriod ?? "Today")
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="?selectedRevenuePeriod=Today&selectedSalesPeriod=@Model.SelectedSalesPeriod&selectedTopSalesPeriod=@Model.SelectedTopSalesPeriod">Today</a></li>
+                            <li><a class="dropdown-item" href="?selectedRevenuePeriod=This Week&selectedSalesPeriod=@Model.SelectedSalesPeriod&selectedTopSalesPeriod=@Model.SelectedTopSalesPeriod">This Week</a></li>
+                            <li><a class="dropdown-item" href="?selectedRevenuePeriod=Last Month&selectedSalesPeriod=@Model.SelectedSalesPeriod&selectedTopSalesPeriod=@Model.SelectedTopSalesPeriod">Last Month</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -86,4 +170,4 @@
             </div>
         </div>
     </div>
-</div>>
+</div>
