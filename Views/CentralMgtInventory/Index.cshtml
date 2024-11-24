@@ -1,0 +1,57 @@
+﻿@* @model IEnumerable<MaxHelp_System_Upgrade.ViewModels.CentralMgtInventoryViewModel> *@
+@model IEnumerable<MaxHelp_System_Upgrade.ViewModels.InventoryViewModel>
+
+@{
+    ViewData["Title"] = "Inventory";
+}
+
+<h1>Central Inventory</h1>
+
+<!-- Higher Header for Filtering -->
+<div>
+    <button onclick="location.href='@Url.Action("Index", new { filter = "All" })'" class="btn @(ViewBag.Filter == "All" ? "btn-primary" : "btn-secondary")">All</button>
+    <button onclick="location.href='@Url.Action("Index", new { filter = "Groceries" })'" class="btn @(ViewBag.Filter == "Groceries" ? "btn-primary" : "btn-secondary")">Groceries</button>
+    <button onclick="location.href='@Url.Action("Index", new { filter = "Bookshop" })'" class="btn @(ViewBag.Filter == "Bookshop" ? "btn-primary" : "btn-secondary")">Bookshop</button>
+    <button onclick="location.href='@Url.Action("Index", new { filter = "BottledWater" })'" class="btn @(ViewBag.Filter == "BottledWater" ? "btn-primary" : "btn-secondary")">Bottle Water</button>
+    <button onclick="location.href='@Url.Action("Index", new { filter = "Restaurant" })'" class="btn @(ViewBag.Filter == "Restaurant" ? "btn-primary" : "btn-secondary")">Restaurant</button>
+</div>
+
+<!-- Search Bar -->
+<form method="get" action="@Url.Action("Index")">
+    <input type="text" name="searchQuery" placeholder="Search products..." value="@ViewBag.SearchQuery" />
+    <input type="hidden" name="filter" value="@ViewBag.Filter" />
+    <button type="submit">Search</button>
+</form>
+
+<!-- Add Product Button -->
+<a href="@Url.Action("AddProduct")" class="btn btn-primary">Add New Product</a>
+
+<!-- Inventory Table -->
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Product Number</th>
+            <th>Stock Quantity</th>
+            <th>Price (₦)</th>
+            <th>Business Unit</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ProductName</td>
+                <td>@item.ProductNumber</td>
+                <td>@item.ProductQuantity</td>
+                <td>@item.ProductPrice</td>
+                <td>@item.BusinessUnitName</td>
+                <td>
+                    <a href="@Url.Action("EditProduct", new { id = item.Id })" class="btn btn-warning">Edit</a>
+                    <a href="@Url.Action("DeleteProduct", new { id = item.Id })" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

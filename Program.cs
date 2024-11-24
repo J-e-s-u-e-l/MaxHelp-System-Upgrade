@@ -1,5 +1,7 @@
 using MaxHelp_System_Upgrade.Data;
 using MaxHelp_System_Upgrade.Models;
+using MaxHelp_System_Upgrade.Services.Implementations;
+using MaxHelp_System_Upgrade.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -23,6 +25,8 @@ namespace MaxHelp_System_Upgrade
             builder.Services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<DataDbContext>()
                 .AddDefaultTokenProviders();
+
+            builder.Services.AddScoped<IInventoryService, InventoryService>();
 
             /*builder.Services.ConfigureApplicationCookie(options =>
             {

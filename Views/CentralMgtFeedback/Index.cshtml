@@ -1,0 +1,60 @@
+﻿@model IEnumerable<MaxHelp_System_Upgrade.ViewModels.FeedbackViewModel>
+
+@{
+    ViewData["Title"] = "Feedbacks";
+}
+
+<h1>Central Feedback</h1>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between mb-3">
+        <!-- Search Bar -->
+        <form method="get" action="@Url.Action("Index")">
+            <input type="text" name="searchQuery" placeholder="Search..." value="@ViewBag.SearchQuery" />
+            <button type="submit">Search</button>
+        </form>
+
+        @* <input type="text" class="form-control w-50" placeholder="Search..." id="searchBar" onkeyup="filterTable()"> *@
+
+        <div class="dropdown me-3">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown">
+                Filter
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="?sortBy=latest">Latest</a></li>
+                <li><a class="dropdown-item" href="?sortBy=earliest">Earliest</a></li>
+            </ul>
+        </div>
+        <form action="@Url.Action("MarkAllAsSeen", "Feedback")" method="post">
+            <button type="submit" class="btn btn-primary">Mark All as Seen</button>
+        </form>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Message</th>
+                <th>Division of Complaint</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var feedback in Model)
+            {
+                <tr style="font-weight: @(feedback.IsRead ? "normal" : "bold")">
+                    <td>
+                        <span class="email-icon" style="background-color: @feedback.EmailIconColor; padding: 5px;">
+                            @feedback.SenderEmail[0]
+                        </span>
+                        <div>
+                            <p>@feedback.SenderEmail</p>
+                            <p>@feedback.MessageSnippet</p>
+                        </div>
+                    </td>
+                    <td>@feedback.DivisionOfComplaint</td>
+                    <td>@feedback.DateSentFormatted</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

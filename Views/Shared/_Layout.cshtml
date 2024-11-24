@@ -50,9 +50,9 @@
             @if ("centralMgtAdmin" == (User.Claims.First(x => x.Type == "BusinessUnitName").Value)) 
             {
                 <a class="nav-link" asp-controller="CentralMgtDashboard" asp-action="Index">Dashboard</a>
-                <a class="nav-link" asp-controller="Inventory" asp-action="Index">Inventory</a>
-                <a class="nav-link" asp-controller="FinancialReport" asp-action="Index">Financial Report</a>
-                <a class="nav-link" asp-controller="Feedback" asp-action="Index">Feedback</a>
+                <a class="nav-link" asp-controller="CentralMgtInventory" asp-action="Index">Inventory</a>
+                <a class="nav-link" asp-controller="CentralMgtFinancialReport" asp-action="Index">Financial Report</a>
+                <a class="nav-link" asp-controller="CentralMgtFeedback" asp-action="Index">Feedback</a>
                 <a class="nav-link" asp-controller="Settings" asp-action="Index">Settings</a>
             }
             else

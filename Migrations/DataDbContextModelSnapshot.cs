@@ -40,7 +40,7 @@ namespace MaxHelp_System_Upgrade.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BusinessUnits");
+                    b.ToTable("BusinessUnits", (string)null);
                 });
 
             modelBuilder.Entity("MaxHelp_System_Upgrade.Models.Feedback", b =>
@@ -76,7 +76,7 @@ namespace MaxHelp_System_Upgrade.Migrations
 
                     b.HasIndex("BusinessUnitId");
 
-                    b.ToTable("Feedbacks");
+                    b.ToTable("Feedbacks", (string)null);
                 });
 
             modelBuilder.Entity("MaxHelp_System_Upgrade.Models.FinancialReport", b =>
@@ -103,7 +103,7 @@ namespace MaxHelp_System_Upgrade.Migrations
 
                     b.HasIndex("BusinessUnitId");
 
-                    b.ToTable("FinancialReports");
+                    b.ToTable("FinancialReports", (string)null);
                 });
 
             modelBuilder.Entity("MaxHelp_System_Upgrade.Models.Inventory", b =>
@@ -139,7 +139,7 @@ namespace MaxHelp_System_Upgrade.Migrations
 
                     b.HasIndex("BusinessUnitId");
 
-                    b.ToTable("Inventory");
+                    b.ToTable("Inventory", (string)null);
                 });
 
             modelBuilder.Entity("MaxHelp_System_Upgrade.Models.Sales", b =>
@@ -173,7 +173,7 @@ namespace MaxHelp_System_Upgrade.Migrations
 
                     b.HasIndex("InventoryId");
 
-                    b.ToTable("Sales");
+                    b.ToTable("Sales", (string)null);
                 });
 
             modelBuilder.Entity("MaxHelp_System_Upgrade.Models.User", b =>

@@ -19,7 +19,7 @@ namespace MaxHelp_System_Upgrade.Data
                     new BusinessUnit { Name = "Groceries", Location = "Mainland" },
                     new BusinessUnit { Name = "BookShop", Location = "Island" },
                     new BusinessUnit { Name = "Restaurant", Location = "Mainland" },
-                    new BusinessUnit { Name = "Bottled water", Location = "Island" },
+                    new BusinessUnit { Name = "BottledWater", Location = "Island" },
                     new BusinessUnit { Name = "CentralMgt", Location = "Island" }
                 );
                 await _dataDbContext.SaveChangesAsync();
@@ -71,7 +71,7 @@ namespace MaxHelp_System_Upgrade.Data
                     UserName = "BottledWaterAdmin",
                     Email = "bottledWateradmin@maxhelp.com",
                     NormalizedEmail = "BOTTLEDWATERADMIN@MAXHELP.COM",
-                    BusinessUnitId = _dataDbContext.BusinessUnits.First(x => x.Name == "Bottled Water").Id,
+                    BusinessUnitId = _dataDbContext.BusinessUnits.First(x => x.Name == "BottledWater").Id,
                     TwoFactorEnabled = false
                 };
 
@@ -153,7 +153,7 @@ namespace MaxHelp_System_Upgrade.Data
 
                 var businessUnits = _dataDbContext.BusinessUnits.ToList();
 
-                int unitsToProcess = 4;  // This ensures only 4 units (Groceries, BookShop, Restaurant and Bottled water) are seeded with inventory data
+                int unitsToProcess = 4;  // This ensures only 4 units (Groceries, BookShop, Restaurant and BottledWater) are seeded with inventory data
 
                 foreach (var unit in businessUnits)
                 {
@@ -165,7 +165,7 @@ namespace MaxHelp_System_Upgrade.Data
                         "Groceries" => groceriesProducts,
                         "BookShop" => bookShopProducts,
                         "Restaurant" => restaurantProducts,
-                        "Bottled water" => bottledWaterProducts,
+                        "BottledWater" => bottledWaterProducts,
                         _ => throw new Exception("Unkown business unit")
                     };
 
@@ -237,7 +237,7 @@ namespace MaxHelp_System_Upgrade.Data
                 var businessUnits = _dataDbContext.BusinessUnits.ToList();
                 var divisions = _dataDbContext.BusinessUnits.Select(bu => bu.Name).ToArray();
             
-                int unitsToProcess = 4;  // This ensures only 4 units (Groceries, BookShop, Restaurant and Bottled water) are seeded
+                int unitsToProcess = 4;  // This ensures only 4 units (Groceries, BookShop, Restaurant and BottledWater) are seeded
 
                 foreach (var unit in businessUnits)
                 {

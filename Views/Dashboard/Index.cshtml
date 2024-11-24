@@ -57,8 +57,11 @@
                         @foreach (var item in Model.TopSales)
                         {
                             <li class="list-group-item">
-                                @item.ItemName - @item.SalesCount Sales - ₦@item.TotalAmount
+                                @item.ItemName - @item.SalesCount Sales - <span style="color: green;">₦@item.TotalAmount</span>
                             </li>
+                            @* <li class="list-group-item">
+                                @item.ItemName - @item.SalesCount Sales - ₦@item.TotalAmount
+                            </li> *@
                         }
                     </ul>
                 </div>
