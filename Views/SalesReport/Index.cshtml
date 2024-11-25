@@ -3,35 +3,111 @@
     ViewData["Title"] = "Sales Report";
 }
 
-<h1>Sales Report</h1>
+<style>
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .header h1 {
+        font-size: 24px;
+    }
+
+    .action-button {
+        background-color: #9c5fd9;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 12px;
+        transition: background-color 0.3s;
+    }
+
+    .action-button:hover {
+        background-color: #7a4fb3;
+    }
+
+    .card {
+        border-radius: 15px;
+        transition: transform 0.2s, box-shadow 0.2s;
+        border: 1px solid #e0e0e0;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .sales {
+        font-size: 60px;
+        font-weight: bold;
+    }
+
+    .units {
+        font-size: 20px;
+        color: #cccaca;
+    }
+
+    .dropdown-toggle {
+        background-color: #f6f6f6;
+        color: gray;
+        border: none;
+        transition: background-color 0.5s ease;
+    }
+
+    .dropdown-toggle:hover {
+        background-color: gray;
+        color: white;
+    }
+
+    .top-selling-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        transition: background-color 0.3s;
+    }
+
+    .top-selling-item:hover {
+        background-color: #f1e9fa;
+    }
+
+    .revenue {
+        font-size: 60px;
+        font-weight: bold;
+    }
+
+    .perc {
+        font-size: 14px;
+        color: #42b440;
+    }
+</style>
+
+<div class="header">
+    <h1>Sales Report</h1>
+    <div>
+        <button class="action-button">Export</button>
+        <button class="action-button">Import</button>
+        <button class="action-button">More actions</button>
+    </div>
+</div>
 
 <div class="container mt-4">
     <div class="row">
         <!-- Total Sales Card -->
-        <div class="col-md-6">
+        <div class="col-md-6 mb-4">
             <div class="card">
                 <div class="card-body">
                     <h5>Total Sales</h5>
-                    <p>
-                        @if (string.IsNullOrEmpty(Model.SelectedSalesPeriod) || Model.SelectedSalesPeriod == "Today")
-                        {
-                            @Model.TotalUnitsSoldToday
-                        }
-                        else if (Model.SelectedSalesPeriod == "Last Week")
-                        {
-                            @Model.TotalUnitsSoldLastWeek
-                        }
-                        else if (Model.SelectedSalesPeriod == "Last Month")
-                        {
-                            @Model.TotalUnitsSoldLastMonth
-                        }
-                    </p>
-
                     <!-- Dropdown for Total Units Sold -->
-                    <div class="dropdown">
+                    <div class="dropdown mb-3">
                         <form method="get" action="@Url.Action("Index")">
                             <input type="hidden" name="SelectedRevenuePeriod" value="@Model.SelectedRevenuePeriod" />
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="salesDropdown" data-bs-toggle="dropdown">
+                            <button class="btn dropdown-toggle" type="button" id="salesDropdown" data-bs-toggle="dropdown">
                                 @(string.IsNullOrEmpty(Model.SelectedSalesPeriod) ? "Today" : Model.SelectedSalesPeriod)
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="salesDropdown">
@@ -47,13 +123,28 @@
                             </ul>
                         </form>
                     </div>
+                    <p class="sales">
+                        @if (string.IsNullOrEmpty(Model.SelectedSalesPeriod) || Model.SelectedSalesPeriod == "Today")
+                        {
+                            @Model.TotalUnitsSoldToday
+                        }
+                        else if (Model.SelectedSalesPeriod == "Last Week")
+                        {
+                            @Model.TotalUnitsSoldLastWeek
+                        }
+                        else if (Model.SelectedSalesPeriod == "Last Month")
+                        {
+                            @Model.TotalUnitsSoldLastMonth
+                        }
+                        <span class="units">Units</span>
+                    </p>
 
                     <!-- Top Selling Products -->
                     <h6 class="mt-3">Top Selling Products</h6>
                     <ul class="list-group">
                         @foreach (var product in Model.TopSellingProducts)
                         {
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <li class="top-selling-item">
                                 @product.ItemName
                                 <span class="badge bg-primary">@product.SalesCount Units</span>
                             </li>
@@ -64,25 +155,26 @@
         </div>
 
         <!-- Total Revenue Card -->
-        <div class="col-md-6">
+        <div class="col-md-6 mb-4">
             <div class="card">
                 <div class="card-body">
                     <h5>Total Revenue</h5>
-                    <p>
+                    <p class="revenue">
                         ₦@(
-                           string.IsNullOrEmpty(Model.SelectedRevenuePeriod) || Model.SelectedRevenuePeriod == "Today"
-                           ? Model.TotalRevenueToday.ToString("N2")
-                           : Model.SelectedRevenuePeriod == "Last Week"
-                           ? Model.TotalRevenueLastWeek.ToString("N2")
-                           : Model.TotalRevenueLastMonth.ToString("N2")
-                           )
+                        string.IsNullOrEmpty(Model.SelectedRevenuePeriod) || Model.SelectedRevenuePeriod == "Today"
+                        ? Model.TotalRevenueToday.ToString("N2")
+                        : Model.SelectedRevenuePeriod == "Last Week"
+                        ? Model.TotalRevenueLastWeek.ToString("N2")
+                        : Model.TotalRevenueLastMonth.ToString("N2")
+                        )
+                        <span class="perc"><i class='bx bxs-up-arrow'></i>30%</span>
                     </p>
 
                     <!-- Dropdown for Total Revenue -->
                     <div class="dropdown">
                         <form method="get" action="@Url.Action("Index")">
                             <input type="hidden" name="SelectedSalesPeriod" value="@Model.SelectedSalesPeriod" />
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="revenueDropdown" data-bs-toggle="dropdown">
+                            <button class="btn dropdown-toggle" type="button" id="revenueDropdown" data-bs-toggle="dropdown">
                                 @(string.IsNullOrEmpty(Model.SelectedRevenuePeriod) ? "Today" : Model.SelectedRevenuePeriod)
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="revenueDropdown">

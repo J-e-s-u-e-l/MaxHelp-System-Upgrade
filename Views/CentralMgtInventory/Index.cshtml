@@ -1,57 +1,128 @@
-﻿@* @model IEnumerable<MaxHelp_System_Upgrade.ViewModels.CentralMgtInventoryViewModel> *@
-@model IEnumerable<MaxHelp_System_Upgrade.ViewModels.InventoryViewModel>
+﻿@model IEnumerable<MaxHelp_System_Upgrade.ViewModels.InventoryViewModel>
 
 @{
-    ViewData["Title"] = "Inventory";
+    ViewData["Title"] = "Central Inventory";
 }
 
-<h1>Central Inventory</h1>
+<style>
+    /* Additional Custom Styles */
+    .btn-primary {
+        background-color: #9c5fd9;
+        border: none;
+        font-weight: bold;
+        transition: 0.2s ease;
+    }
 
-<!-- Higher Header for Filtering -->
-<div>
-    <button onclick="location.href='@Url.Action("Index", new { filter = "All" })'" class="btn @(ViewBag.Filter == "All" ? "btn-primary" : "btn-secondary")">All</button>
-    <button onclick="location.href='@Url.Action("Index", new { filter = "Groceries" })'" class="btn @(ViewBag.Filter == "Groceries" ? "btn-primary" : "btn-secondary")">Groceries</button>
-    <button onclick="location.href='@Url.Action("Index", new { filter = "Bookshop" })'" class="btn @(ViewBag.Filter == "Bookshop" ? "btn-primary" : "btn-secondary")">Bookshop</button>
-    <button onclick="location.href='@Url.Action("Index", new { filter = "BottledWater" })'" class="btn @(ViewBag.Filter == "BottledWater" ? "btn-primary" : "btn-secondary")">Bottle Water</button>
-    <button onclick="location.href='@Url.Action("Index", new { filter = "Restaurant" })'" class="btn @(ViewBag.Filter == "Restaurant" ? "btn-primary" : "btn-secondary")">Restaurant</button>
-</div>
-
-<!-- Search Bar -->
-<form method="get" action="@Url.Action("Index")">
-    <input type="text" name="searchQuery" placeholder="Search products..." value="@ViewBag.SearchQuery" />
-    <input type="hidden" name="filter" value="@ViewBag.Filter" />
-    <button type="submit">Search</button>
-</form>
-
-<!-- Add Product Button -->
-<a href="@Url.Action("AddProduct")" class="btn btn-primary">Add New Product</a>
-
-<!-- Inventory Table -->
-<table class="table">
-    <thead>
-        <tr>
-            <th>Product Name</th>
-            <th>Product Number</th>
-            <th>Stock Quantity</th>
-            <th>Price (₦)</th>
-            <th>Business Unit</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.ProductName</td>
-                <td>@item.ProductNumber</td>
-                <td>@item.ProductQuantity</td>
-                <td>@item.ProductPrice</td>
-                <td>@item.BusinessUnitName</td>
-                <td>
-                    <a href="@Url.Action("EditProduct", new { id = item.Id })" class="btn btn-warning">Edit</a>
-                    <a href="@Url.Action("DeleteProduct", new { id = item.Id })" class="btn btn-danger">Delete</a>
-                </td>
-            </tr>
+        .btn-primary:hover {
+            background-color: white;
+            color: #9c5fd9;
+            border: 1px solid #9c5fd9;
         }
-    </tbody>
-</table>
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border: none;
+        font-weight: bold;
+    }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+    .filter-buttons {
+        margin-bottom: 20px;
+    }
+
+    .search-input {
+        max-width: 400px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-right: 10px;
+    }
+
+    .search-button {
+        border: none;
+        border-radius: 5px;
+        padding: 10px 15px;
+        background-color: #9c5fd9;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+        .search-button:hover {
+            background-color: #7a4fb3;
+        }
+
+    .table th, .table td {
+        padding: 10px;
+    }
+
+    .table th {
+        background-color: #f8f9fa;
+        font-weight: bold;
+    }
+
+    .action-buttons a {
+        margin-right: 5px;
+    }
+</style>
+
+<div class="container my-4">
+    <h1 class="mb-4">Central Inventory</h1>
+
+    <!-- Filter Buttons -->
+    <div class="filter-buttons">
+        <button onclick="location.href='@Url.Action("Index", new { filter = "All" })'" class="btn @(ViewBag.Filter == "All" ? "btn-primary" : "btn-secondary")">All</button>
+        <button onclick="location.href='@Url.Action("Index", new { filter = "Groceries" })'" class="btn @(ViewBag.Filter == "Groceries" ? "btn-primary" : "btn-secondary")">Groceries</button>
+        <button onclick="location.href='@Url.Action("Index", new { filter = "Bookshop" })'" class="btn @(ViewBag.Filter == "Bookshop" ? "btn-primary" : "btn-secondary")">Bookshop</button>
+        <button onclick="location.href='@Url.Action("Index", new { filter = "BottledWater" })'" class="btn @(ViewBag.Filter == "BottledWater" ? "btn-primary" : "btn-secondary")">Bottle Water</button>
+        <button onclick="location.href='@Url.Action("Index", new { filter = "Restaurant" })'" class="btn @(ViewBag.Filter == "Restaurant" ? "btn-primary" : "btn-secondary")">Restaurant</button>
+    </div>
+
+    <!-- Search Bar -->
+    <form method="get" action="@Url.Action("Index")" class="d-flex align-items-center mb-4">
+        <input type="text" name="searchQuery" class="search-input form-control me-2" placeholder="Search products..." value="@ViewBag.SearchQuery" />
+        <input type="hidden" name="filter" value="@ViewBag.Filter" />
+        <button type="submit" class="search-button">Search</button>
+    </form>
+
+    <!-- Add Product Button -->
+    <div class="mb-4">
+        <a href="@Url.Action("AddProduct")" class="btn btn-primary">Add New Product</a>
+    </div>
+
+    <!-- Inventory Table -->
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Product Number</th>
+                    <th>Stock Quantity</th>
+                    <th>Price (₦)</th>
+                    <th>Business Unit</th>
+                    <th>Actions</th>
+                </tr>
+                </ ```razor
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.ProductName</td>
+                        <td>@item.ProductNumber</td>
+                        <td>@item.ProductQuantity</td>
+                        <td>₦@string.Format("{0:n}", item.ProductPrice)</td>
+                        <td>@item.BusinessUnitName</td>
+                        <td class="action-buttons">
+                            <a href="@Url.Action("EditProduct", new { id = item.Id })" class="btn btn-warning btn-sm" title="Edit Product"><i class="bx bx-edit-alt"></i></a>
+                            <a href="@Url.Action("DeleteProduct", new { id = item.Id })" class="btn btn-danger btn-sm" title="Delete Product"><i class="bx bxs-trash"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

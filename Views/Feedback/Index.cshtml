@@ -4,33 +4,101 @@
     ViewData["Title"] = "Feedbacks";
 }
 
-<h1>Feedback</h1>
+<h1 class="mt-4">Feedback</h1>
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between mb-3">
+<style>
+    /* Enhanced and simplified custom styles */
+    #container {
+        border: 1px solid #eaeaea;
+        padding: 20px;
+        border-radius: 10px;
+        background-color: #ffffff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .table thead th {
+        background-color: #f8f9fa;
+        font-weight: bold;
+        color: #333;
+        text-align: center;
+    }
+
+    .table tbody td {
+        vertical-align: middle;
+    }
+
+    .feedback-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: inline-block;
+        line-height: 40px;
+        text-align: center;
+        font-weight: bold;
+        color: white;
+    }
+
+    .feedback-message p {
+        margin: 0;
+        font-size: 0.9rem;
+    }
+
+    .feedback-message small {
+        color: gray;
+    }
+
+    .Mark {
+        color: white;
+        background-color: #7a4fb3;
+        border: none;
+        font-weight: bold;
+    }
+    .submit {
+        color: white;
+        background-color: #7a4fb3;
+        border: none;
+        font-weight: bold;
+    }
+
+    #filterDropdown {
+        background-color: #ffffff;
+        color: #333;
+        border: 1px solid #ced4da;
+    }
+</style>
+
+<div class="container mt-4" id="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <!-- Search Bar -->
-        <form method="get" action="@Url.Action("Index")">
-            <input type="text" name="searchQuery" placeholder="Search..." value="@ViewBag.SearchQuery" />
-            <button type="submit">Search</button>
+        <form method="get" action="@Url.Action("Index")" class="d-flex flex-grow-1 me-3">
+            <input type="text" name="searchQuery"
+                   class="form-control me-2"
+                   placeholder="Search feedback..."
+                   value="@ViewBag.SearchQuery">
+            <button type="submit" class="btn submit">Search</button>
         </form>
 
-        @* <input type="text" class="form-control w-50" placeholder="Search..." id="searchBar" onkeyup="filterTable()"> *@
-
-        <div class="dropdown me-3">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown">
-                Filter
+        <!-- Filter Dropdown -->
+        <div class="dropdown">
+            <button class="btn btn-light dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown">
+                <i class="bx bx-filter"></i> Filter
             </button>
             <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="?sortBy=latest">Latest</a></li>
                 <li><a class="dropdown-item" href="?sortBy=earliest">Earliest</a></li>
             </ul>
         </div>
-        <form action="@Url.Action("MarkAllAsSeen", "Feedback")" method="post">
-            <button type="submit" class="btn btn-primary">Mark All as Seen</button>
+
+        <!-- Mark All As Seen -->
+        <form action="@Url.Action("MarkAllAsSeen", "Feedback")" method="post" class="ms-3">
+            <button type="submit" class="btn Mark">
+                <i class="bx bx-check-double"></i> Mark All as Seen
+            </button>
         </form>
     </div>
 
-    <table class="table table-striped">
+    <!-- Feedback Table -->
+    <table class="table table-bordered table-hover text-center">
         <thead>
             <tr>
                 <th>Message</th>
@@ -39,21 +107,30 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var feedback in Model)
+            @if (!Model?.Any() ?? true)
             {
-                <tr style="font-weight: @(feedback.IsRead ? "normal" : "bold")">
-                    <td>
-                        <span class="email-icon" style="background-color: @feedback.EmailIconColor; padding: 5px;">
-                            @feedback.SenderEmail[0]
-                        </span>
-                        <div>
-                            <p>@feedback.SenderEmail</p>
-                            <p>@feedback.MessageSnippet</p>
-                        </div>
-                    </td>
-                    <td>@feedback.DivisionOfComplaint</td>
-                    <td>@feedback.DateSentFormatted</td>
+                <tr>
+                    <td colspan="3" class="text-center text-muted">No feedback available.</td>
                 </tr>
+            }
+            else
+            {
+                foreach (var feedback in Model)
+                {
+                    <tr class="@(feedback.IsRead ? "" : "fw-bold")">
+                        <td class="d-flex align-items-center">
+                            <span class="feedback-icon" style="background-color: @Html.Raw(feedback.EmailIconColor);">
+                                @feedback.SenderEmail?[0]
+                            </span>
+                            <div class="feedback-message ms-3">
+                                <p class="fw-bold">@feedback.SenderEmail</p>
+                                <small>@feedback.MessageSnippet</small>
+                            </div>
+                        </td>
+                        <td>@feedback.DivisionOfComplaint</td>
+                        <td>@feedback.DateSentFormatted</td>
+                    </tr>
+                }
             }
         </tbody>
     </table>

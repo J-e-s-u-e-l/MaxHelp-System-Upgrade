@@ -4,41 +4,107 @@
     ViewData["Title"] = "Inventory";
 }
 
-<h1>Inventory</h1>
+<style>
+    /* Additional Custom Styles */
+    .btn-primary {
+        background-color: #9c5fd9;
+        border: none;
+        font-weight: bold;
+        transition: 0.2s ease;
+    }
 
-<!-- Search Bar -->
-<form method="get" action="@Url.Action("Index")">
-    <input type="text" name="searchQuery" placeholder="Search products..." value="@ViewBag.SearchQuery" />
-    <button type="submit">Search</button>
-</form>
+    .btn-primary:hover {
+        background-color: white;
+        color: #9c5fd9;
+        border: 1px solid #9c5fd9;
+    }
 
-<!-- Add Product Button -->
-<a href="@Url.Action("AddProduct")" class="btn btn-primary">Add New Product</a>
+    .search-input {
+        max-width: 400px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-right: 10px;
+    }
 
-<!-- Inventory Table -->
-<table class="table">
-    <thead>
-        <tr>
-            <th>Product Name</th>
-            <th>Product Number</th>
-            <th>Stock Quantity</th>
-            <th>Price (₦)</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.ProductName</td>
-                <td>@item.ProductNumber</td>
-                <td>@item.ProductQuantity</td>
-                <td>@item.ProductPrice</td>
-                <td>
-                    <a href="@Url.Action("EditProduct", new { id = item.Id })" class="btn btn-warning">Edit</a>
-                    <a href="@Url.Action("DeleteProduct", new { id = item.Id })" class="btn btn-danger">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    .search-button {
+        border: none;
+        border-radius: 5px;
+        padding: 10px 15px;
+        background-color: #9c5fd9;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .search-button:hover {
+        background-color: #7a4fb3;
+    }
+
+    .table th, .table td {
+        padding: 10px;
+    }
+
+    .table th {
+        background-color: #f8f9fa;
+        font-weight: bold;
+    }
+
+    .action-buttons a {
+        margin-right: 5px;
+    }
+</style>
+
+<div class="container my-4">
+    <h1 class="mb-4">Inventory</h1>
+
+    <!-- Search Bar -->
+    <form method="get" action="@Url.Action("Index")" class="d-flex justify-content-start align-items-center mb-4">
+        <input type="text" name="searchQuery" class="search-input form-control me-2" placeholder="Search products..." value="@ViewBag.SearchQuery" />
+        <button type="submit" class="search-button">Search</button>
+    </form>
+
+    <!-- Add Product Button -->
+    <div class="mb-4">
+        <a href="@Url.Action("AddProduct")" class="btn btn-primary">Add New Product</a>
+    </div>
+
+    <!-- Responsive Table -->
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Product Number</th>
+                    <th>Stock Quantity</th>
+                    <th>Price (₦)</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="5" class="text-center">No products available.</td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.ProductName</td>
+                            <td>@item.ProductNumber</td>
+                            <td>@item.ProductQuantity</td>
+                            <td>₦@string.Format("{0:n}", item.ProductPrice)</td>
+                            <td class="action-buttons">
+                                <a href="@Url.Action("EditProduct", new { id = item.Id })" class="btn btn-warning btn-sm" title="Edit Product"><i class="bx bx-edit-alt"></i></a>
+                                <a href="@Url.Action("DeleteProduct", new { id = item.Id })" class="btn btn-danger btn-sm" title="Delete Product"><i class="bx bxs-trash"></i></a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -3,30 +3,154 @@
     ViewData["Title"] = "Dashboard";
 }
 
+<style>
+    /* Global Styles */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        color: #343a40;
+    }
+
+    h1 {
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    h5{
+        font-weight: bold;
+    }
+
+    /* Card Styles */
+    .card {
+        border-radius: 19px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+        position: relative; /* Ensure cards are positioned relative */
+        min-height: 200px;
+    }
+
+        .card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+    /* Dropdown Styles */
+    .dropdown-menu {
+        z-index: 1050; /* Ensure it stays above other content */
+        position: absolute; /* Prevent layout shifts */
+        top: 100%; /* Align right below the button */
+        left: 0;
+        margin-top: 0.5rem; /* Add space between the button and the dropdown */
+        min-width: 200px; /* Adjust dropdown width if necessary */
+        /* z-index: 1050; /* Ensure it is above other content */ */
+    }
+
+    /* Card Body Adjustments */
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 20px;
+        overflow: hidden; /* Hide any overflow content */
+        position: relative; /* Context for absolute elements inside */
+    }
+
+    /* Dropdown Button */
+    .dropdown-toggle {
+        background-color: #f6f6f6;
+        color: gray;
+        border: none;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+        .dropdown-toggle:hover {
+            background-color: gray;
+            color: white;
+        }
+
+    /* List Group Styles */
+    .list-group {
+        width: 100%;
+        padding: 0;
+        margin-top: 15px;
+    }
+
+    .list-group-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border: none;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .TopSales-list-group-item {
+        padding: 10px 15px;
+    }
+
+    /* Specific Headings */
+    .sales_head {
+        font-weight: bold;
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+    }
+
+    ul li {
+        list-style-type: none;
+    }
+
+    .totUnitsSold{
+        font-weight: bold;
+    }
+
+    .item-name {
+        flex: 1;
+        margin-right: 10px;
+    }
+
+    .sales_no {
+        color: gray;
+        margin-right: 10px;
+    }
+
+    .profit {
+        color: #42b440;
+        font-weight: bold;
+    }
+</style>
 
 <h1>Central Management Dashboard</h1>
 
 <div class="container mt-4">
-    <div class="row">
-        <!-- Total Sales Card -->
+    <div class="row g-2">
+        <!-- Total Units Sold Card -->
         <div class="col-md-6">
             <div class="card">
                 <div class="card-body">
                     <h5>Total Units Sold Across All BU</h5>
-
+                    <p>
                         @if (string.IsNullOrEmpty(Model.SelectedSalesPeriod) || Model.SelectedSalesPeriod == "Today")
                         {
-                            <p>@Model.TotalUnitSoldToday Units</P>
-                        }
+                            <span class="totUnitsSold">
+                            @Model.TotalUnitSoldToday
+                            Units
+                            </span>
+                                    }
                         else if (Model.SelectedSalesPeriod == "This Week")
                         {
-                            <p>@Model.TotalUnitSoldThisWeek Units</p>
-                        }
+                            <span class="totUnitsSold">
+                            @Model.TotalUnitSoldThisWeek
+                            Units
+                            </span>
+                                    }
                         else if (Model.SelectedSalesPeriod == "Last Month")
                         {
-                            <p>@Model.TotalUnitSoldLastMonth Units</p>
-                        }
-
+                            <span class="totUnitsSold">
+                            @Model.TotalUnitSoldLastMonth
+                                Units
+                            </span>
+                                    }
+                    </p>
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
                             @(Model.SelectedSalesPeriod ?? "Today")
@@ -41,40 +165,49 @@
             </div>
         </div>
 
-        <!-- Top Sales -->
+        <!-- Top Sales Card -->
         <div class="col-md-6">
             <div class="card">
                 <div class="card-body">
                     <h5>Top Sales</h5>
-                    <ul style="list-style: none;" class="list-group">
+                    <ul class="list-group">
                         @if (string.IsNullOrEmpty(Model.SelectedTopSalesPeriod) || Model.SelectedTopSalesPeriod == "Today")
                         {
                             if (Model.TopSalesToday.Count == 0)
                             {
-                                <li>No Top Sales To Display</li>
+                                <li class="TopSales-list-group-item">No Top Sales To Display</li>
                             }
                             @foreach (var item in Model.TopSalesToday)
                             {
-                                <li class="TopSales-list-group-item">
-                                    @item.ItemName - @item.SalesCount Sales - ₦@string.Format("{0:n}", item.TotalAmount)
+                                <li class="list-group-item">
+                                    <span class="item-name">@item.ItemName</span>
+                                    <span class="sales_no">@item.SalesCount Sales</span>
+                                    <span class="profit">+ ₦@item.TotalAmount</span>
                                 </li>
                             }
                         }
-                        else if (Model.SelectedSalesPeriod == "This Week")
+                        else if (Model.SelectedTopSalesPeriod == "This Week")
                         {
                             @foreach (var item in Model.TopSalesThisWeek)
                             {
-                                <li class="TopSales-list-group-item">
-                                    @item.ItemName - @item.SalesCount Sales - ₦@string.Format("{0:n}", item.TotalAmount)
+                                <li class="list-group-item">
+                                    <span class="item-name">@item.ItemName</span>
+                                    <span class="sales_no">@item.SalesCount Sales</span>
+                                    <span class="profit">+ ₦@item.TotalAmount</span>
                                 </li>
                             }
                         }
-                        else if (Model.SelectedSalesPeriod == "Last Month")
+                        else if (Model.SelectedTopSalesPeriod == "Last Month")
                         {
                             @foreach (var item in Model.TopSalesLastMonth)
                             {
-                                <li class="TopSales-list-group-item">
+                                @* <li class="TopSales-list-group-item">
                                     @item.ItemName - @item.SalesCount Sales - ₦@string.Format("{0:n}", item.TotalAmount)
+                                </li> *@
+                                <li class="list-group-item">
+                                    <span class="item-name">@item.ItemName</span>
+                                    <span class="sales_no">@item.SalesCount Sales</span>
+                                    <span class="profit">+ ₦@item.TotalAmount</span>
                                 </li>
                             }
                         }
@@ -95,55 +228,58 @@
     </div>
 
     <div class="row mt-3">
-        <!-- Revenue Collection -->
+        <!-- Revenue Collection Card -->
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
                     <h5>Revenue Collection</h5>
-                    <ul style="list-style: none;" class="list-group">
-                        @if (string.IsNullOrEmpty(Model.SelectedRevenuePeriod) || Model.SelectedRevenuePeriod == "Today")
-                        {
-                            if (Model.TotalRevenueToday.Count == 0)
+                    <ul class="list-group">
+                        <ul class="list-group">
+                            @if (string.IsNullOrEmpty(Model.SelectedRevenuePeriod) || Model.SelectedRevenuePeriod == "Today")
                             {
-                                <li>No Revenue To Display</li>
+                                if (Model.TotalRevenueToday.Count == 0)
+                                {
+                                    <li class="list-group-item text-center">
+                                        <i class="fas fa-exclamation-circle text-warning"></i> No Revenue To Display
+                                    </li>
+                                }
+                                else
+                                {
+                                    foreach (var item in Model.TotalRevenueToday)
+                                    {
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <span class="font-weight-bold">@item.BusinessUnitName</span>
+                                            <span class="profit">₦@string.Format("{0:n}", item.Revenue)</span>
+                                        </li>
+                                    }
+                                }
                             }
-                            @foreach (var item in Model.TotalRevenueToday)
+                            else if (Model.SelectedRevenuePeriod == "This Week")
                             {
-                                <li class="TopSales-list-group-item">
-                                    @item.BusinessUnitName - ₦@string.Format("{0:n}", item.Revenue)
-                                </li>
+                                foreach (var item in Model.TotalRevenueThisWeek)
+                                {
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span >@item.BusinessUnitName</span>
+                                        <span class="profit">₦@string.Format("{0:n}", item.Revenue)</span>
+                                    </li>
+                                }
                             }
-                        }
-                        else if (Model.SelectedRevenuePeriod == "This Week")
-                        {
-                            @foreach (var item in Model.TotalRevenueThisWeek)
+                            else if (Model.SelectedRevenuePeriod == "Last Month")
                             {
-                                <li class="TopSales-list-group-item">
-                                    @item.BusinessUnitName - ₦@string.Format("{0:n}", item.Revenue)
-                                </li>
+                                foreach (var item in Model.TotalRevenueLastMonth)
+                                {
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span class="font-weight-bold">@item.BusinessUnitName</span>
+                                        <span class="profit">₦@string.Format("{0:n}", item.Revenue)</span>
+                                    </li>
+                                }
                             }
-                        }
-                        else if (Model.SelectedRevenuePeriod == "Last Month")
-                        {
-                            @foreach (var item in Model.TotalRevenueLastMonth)
-                            {
-                                <li class="TopSales-list-group-item">
-                                    @item.BusinessUnitName - ₦@string.Format("{0:n}", item.Revenue)
-                                </li>
-                            }
-                        }
-                        <li class="TopSales-list-group-item">
-                            TOTAL - ₦@string.Format("{0:n}", Model.TotalRevenueForAllBU)
-                        </li>
-                    </ul>
-                    @* <ul class="list-group">
-                        @foreach (var revenue in Model.TotalRevenueToday)
-                        {
-                            <li class="TopSales-list-group-item">
-                                @revenue.BusinessUnitName - ₦@string.Format("{0:n}", revenue.Revenue)
+
+                            <li class="list-group-item d-flex justify-content-between align-items-center font-weight-bold">
+                                <span>Total Revenue</span>
+                                <span class="profit">₦@string.Format("{0:n}", Model.TotalRevenueForAllBU)</span>
                             </li>
-                        }
-                    </ul> *@
+                        </ul>
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
                             @(Model.SelectedRevenuePeriod ?? "Today")
@@ -160,10 +296,10 @@
     </div>
 
     <div class="row mt-3">
-        <!-- Low Stock Items -->
+        <!-- Low Stock Items Card -->
         <div class="col-md-12">
             <div class="card">
-                <div class="card-body">
+                <div class="card-body justify-content-around">
                     <h5>Low Stock Items</h5>
                     <p>@Model.LowStockItems.Count items are low on stock</p>
                 </div>

@@ -2,18 +2,207 @@
 @{
     ViewData["Title"] = "Dashboard";
 }
+<style>
+    /* Card Adjustments */
+    .card {
+        border-radius: 19px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        height: 100%; /* Ensure cards stretch to fill column height */
+    }
+
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 100%; /* Utilize full card width */
+    }
+
+    /* Specific Card Styling */
+    #Total_sales .card-body, #Top_sales .card-body {
+        padding: 15px;
+    }
+
+    /* List Styling */
+    .list-group {
+        width: 100%;
+    }
+
+    .list-group-item {
+        padding: 10px 15px;
+        display: flex;
+        justify-content: space-between;
+        border: none;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    <style >
+    /* Global Styles */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        color: #343a40;
+    }
+
+    h1 {
+        /* text-align: center; */
+        margin-bottom: 20px;
+        /* color: #007bff; */
+    }
+
+    /* Card Styles */
+    .card {
+        border-radius: 19px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+    }
+
+        .card:hover {
+            transform: scale(1.02);
+        }
+
+    /* Total Sales */
+    #Total_sales {
+        height: 148px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        background-color: #ffffff;
+        border: none;
+    }
+
+    .sales_head {
+        font-weight: bold;
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+    }
+
+    #salesDropdown {
+        background-color: #f6f6f6;
+        color: gray;
+        border: none;
+        width: 120px;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+        #salesDropdown:hover {
+            background-color: gray;
+            color: white;
+        }
+
+    .sales_text {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    /* Top Sales */
+    #Top_sales {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        background-color: #ffffff;
+    }
+
+    .list-group {
+        width: 100%;
+        padding: 0;
+        margin-top: 15px;
+    }
+
+    .list-group-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border: none;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .item-name {
+        flex: 1;
+        margin-right: 10px;
+    }
+
+    .sales_no {
+        color: gray;
+        margin-right: 10px;
+    }
+
+    .profit {
+        color: #42b440;
+        font-weight: bold;
+    }
+
+    /* Beneath Section */
+    .beneath {
+        display: flex;
+        justify-content: space-around;
+        /* align-items: center; */
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 19px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-top: 30px;
+    }
+
+        .beneath div {
+            /* text-align: center; */
+        }
+
+    .week_head, .rev_head {
+        font-size: 1.2rem;
+        margin-bottom: 5px;
+    }
+
+    .perc_increase {
+        font-size: 0.9rem;
+        color: #42b440;
+    }
+
+    .low_stock, .unit_week, .Revnue {
+        font-weight: 500;
+    }
+</style>
 
 <h1>Dashboard</h1>
 
 <div class="container mt-4">
-    <div class="row">
+    <div class="row g-2">
         <!-- Total Sales Card -->
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="card">
                 <div class="card-body">
-                    <h5>Total Sales</h5>
-
-                    <p>₦@if (string.IsNullOrEmpty(Model.SelectedSalesPeriod) || Model.SelectedSalesPeriod == "Today")
+                    <h5 class="sales_head">Total Sales</h5>
+                    <div class="dropdown mb-3">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="salesDropdown"
+                                data-bs-toggle="dropdown">
+                            @(string.IsNullOrEmpty(Model.SelectedSalesPeriod) ? "Today" : Model.SelectedSalesPeriod)
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="salesDropdown">
+                            <li>
+                                <form method="get" action="@Url.Action("Index")">
+                                    <input type="hidden" name="SelectedSalesPeriod" value="Today" />
+                                    <button type="submit" class="dropdown-item">
+                                        Today
+                                    </button>
+                                </form>
+                            </li>
+                            <li>
+                                <form method="get" action="@Url.Action("Index")">
+                                    <input type="hidden" name="SelectedSalesPeriod" value="Yesterday" />
+                                    <button type="submit" class="dropdown-item">
+                                        Yesterday
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                    <p class="sales_text">
+                        ₦@if (string.IsNullOrEmpty(Model.SelectedSalesPeriod) || Model.SelectedSalesPeriod == "Today")
                         {
                             @Model.TotalSalesToday
                         }
@@ -22,82 +211,44 @@
                             @Model.TotalSalesYesterday
                         }
                     </p>
-
-                    <div class="dropdown">
-                        <!-- Dropdown Button: Dynamic Text -->
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="salesDropdown" data-bs-toggle="dropdown">
-                            @(string.IsNullOrEmpty(Model.SelectedSalesPeriod) ? "Today" : Model.SelectedSalesPeriod)
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="salesDropdown">
-                            <!-- Dropdown Links -->
-                            <li>
-                                <form method="get" action="@Url.Action("Index")">
-                                    <input type="hidden" name="SelectedSalesPeriod" value="Today" />
-                                    <button type="submit" class="dropdown-item">Today: ₦@Model.TotalSalesToday</button>
-                                </form>
-                            </li>
-                            <li>
-                                <form method="get" action="@Url.Action("Index")">
-                                    <input type="hidden" name="SelectedSalesPeriod" value="Yesterday" />
-                                    <button type="submit" class="dropdown-item">Yesterday: ₦@Model.TotalSalesYesterday</button>
-                                </form>
-                            </li>
-                        </ul>
-                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Top Sales Card -->
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="card">
                 <div class="card-body">
                     <h5>Top Sales</h5>
-                    <ul class="list-group">
+                    <ul class="list-group list-group-flush">
                         @foreach (var item in Model.TopSales)
                         {
                             <li class="list-group-item">
-                                @item.ItemName - @item.SalesCount Sales - <span style="color: green;">₦@item.TotalAmount</span>
+                                <span class="item-name">@item.ItemName</span>
+                                <span class="sales_no">@item.SalesCount Sales</span>
+                                <span class="profit">+ ₦@item.TotalAmount</span>
                             </li>
-                            @* <li class="list-group-item">
-                                @item.ItemName - @item.SalesCount Sales - ₦@item.TotalAmount
-                            </li> *@
                         }
                     </ul>
                 </div>
             </div>
         </div>
-
-        <!-- Units Sold This Week -->
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5>Units Sold This Week</h5>
-                    <p>@Model.TotalUnitSoldThisWeek units</p>
-                </div>
-            </div>
-        </div>
     </div>
 
-    <div class="row mt-3">
-        <!-- Total Revenue -->
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h5>Total Revenue</h5>
-                    <p>₦@Model.TotalRevenue</p>
-                </div>
-            </div>
+    <!-- Beneath Section -->
+    <div class="beneath">
+        <div class="week">
+            <p class="week_head">Total Sales Per Unit This Week</p>
+            <span class="unit_week">@Model.TotalUnitSoldThisWeek Units</span>
         </div>
-
-        <!-- Low Stock Items -->
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h5>Low Stock Items</h5>
-                    <p>@Model.LowStockItemsCount items</p>
-                </div>
-            </div>
+        <div class="revenue">
+            <p class="rev_head">Total Revenue Made</p>
+            <span class="Revnue">₦@Model.TotalRevenue</span>
+            <span class="perc_increase">+30%</span>
+        </div>
+        <div class="Low">
+            <p>Low Stock Items</p>
+            <span class="low_stock">@Model.LowStockItemsCount items</span>
         </div>
     </div>
 </div>
