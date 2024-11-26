@@ -46,10 +46,25 @@ namespace MaxHelp_System_Upgrade.Services.Implementations
             //return query.ToList();
         }
 
-        public Inventory GetInventoryById(int id)
+        public InventoryViewModel GetInventoryItemById(int id)
+        {
+            var inventoryItem = _dataDbContext.Inventories
+                .Where(i => i.Id == id)
+                .Select(i => new InventoryViewModel
+                {
+                    Id = i.Id,
+                    ProductName = i.ProductName,
+                    ProductNumber = i.ProductNumber,
+                    ProductPrice = i.ProductPrice,
+                    ProductQuantity = i.ProductQuantity
+                }).FirstOrDefault();
+            
+            return inventoryItem;
+        }
+        /*public Inventory GetInventoryItemById(int id)
         {
             return _dataDbContext.Inventories.FirstOrDefault(i => i.Id == id);
-        }
+        }*/
 
         public void AddProduct(Inventory inventory)
         {

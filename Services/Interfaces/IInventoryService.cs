@@ -18,7 +18,7 @@ namespace MaxHelp_System_Upgrade.Services.Interfaces
         /// </summary>
         /// <param name="id">The ID of the inventory item.</param>
         /// <returns>The inventory item, or null if not found.</returns>
-        Inventory GetInventoryById(int id);
+        InventoryViewModel GetInventoryItemById(int id);
 
         /// <summary>
         /// Adds a new product to the inventory.

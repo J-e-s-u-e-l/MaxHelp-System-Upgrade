@@ -15,6 +15,7 @@ namespace MaxHelp_System_Upgrade.Controllers
         public InventoryController(IInventoryService inventoryService, DataDbContext dataDbContext)
         {
             _dataDbContext = dataDbContext;
+            _inventoryService = inventoryService;
         }
 
         public IActionResult Index(string searchQuery)
@@ -23,10 +24,23 @@ namespace MaxHelp_System_Upgrade.Controllers
 
             var businessUnitId = int.Parse(User.Claims.First(x => x.Type == "BusinessUnitId").Value);
 
-            var inventory = _dataDbContext.Inventories
+            /*var inventoryQuery = _dataDbContext.Inventories
                 .Where(i => i.BusinessUnitId == businessUnitId)
                 .Where(i => string.IsNullOrEmpty(searchQuery) || i.ProductName.Contains(searchQuery))
                 .ToList();
+            */
+            var inventory = _dataDbContext.Inventories
+                .Where(i => i.BusinessUnitId == businessUnitId)
+                .Where(i => string.IsNullOrEmpty(searchQuery) || i.ProductName.Contains(searchQuery))
+                .Select(i => new InventoryViewModel
+                {
+                    Id = i.Id,
+                    ProductName = i.ProductName,
+                    ProductNumber = i.ProductNumber,
+                    ProductPrice = i.ProductPrice,
+                    ProductQuantity = i.ProductQuantity,
+                    BusinessUnitId = businessUnitId
+                });
 
             return View(inventory);
         }
@@ -99,7 +113,7 @@ namespace MaxHelp_System_Upgrade.Controllers
         }*/
         public IActionResult EditProduct(int id)
         {
-            var product = _inventoryService.GetInventoryById(id);
+            var product = _inventoryService.GetInventoryItemById(id);
             if (product == null) return NotFound();
             return View(product);
         }
@@ -125,7 +139,8 @@ namespace MaxHelp_System_Upgrade.Controllers
             return View(model);
         }*/
         [HttpPost]
-        public IActionResult EditProduct(CentralMgtInventoryViewModel model)
+        public IActionResult EditProduct(InventoryViewModel model)
+        //public IActionResult EditProduct(CentralMgtInventoryViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -153,7 +168,7 @@ namespace MaxHelp_System_Upgrade.Controllers
         }*/
         public IActionResult DeleteProduct(int id)
         {
-            var product = _inventoryService.GetInventoryById(id);
+            var product = _inventoryService.GetInventoryItemById(id);
             if (product == null) return NotFound();
             return View(product);
         }

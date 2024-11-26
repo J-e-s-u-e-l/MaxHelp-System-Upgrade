@@ -64,7 +64,7 @@ namespace MaxHelp_System_Upgrade.Controllers
 
         public IActionResult EditProduct(int id)
         {
-            var product = _inventoryService.GetInventoryById(id);
+            var product = _inventoryService.GetInventoryItemById(id);
             if (product == null) return NotFound();
             return View(product);
         }
@@ -91,7 +91,7 @@ namespace MaxHelp_System_Upgrade.Controllers
 
         public IActionResult DeleteProduct(int id)
         {
-            var product = _inventoryService.GetInventoryById(id);
+            var product = _inventoryService.GetInventoryItemById(id);
             if (product == null) return NotFound();
             return View(product);
         }
