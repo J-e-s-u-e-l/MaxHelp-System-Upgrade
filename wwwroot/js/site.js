@@ -27,7 +27,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const notificationPanel = document.getElementById("notificationPanel");
     const notificationBadge = document.getElementById("notificationBadge");
 
-    fetch('https://localhost:7171/Notification/GetNotifications')
+    /*fetch('https://localhost:7171/Notification/GetNotifications') */
+    fetch('https://maxhelpsystemupgrade.azurewebsites.net/Notification/GetNotifications')
         .then(response => response.json())
         .then(data => {
             console.log('Notifications:', data);
